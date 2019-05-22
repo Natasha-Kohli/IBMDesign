@@ -13,6 +13,14 @@ const styles = StyleSheet.create({
     alignContent: "stretch",
     height: "100%",
   },
+  notificationBar: {
+    backgroundColor: "black",
+    padding: 15
+  },
+  searchContainer: {
+    backgroundColor: "black",
+    paddingBottom: 5
+  },
   // calloutView: {
   //   flexDirection: "row",
   //   backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -23,9 +31,12 @@ const styles = StyleSheet.create({
   //   marginTop: 20,
   // },
   calloutSearch: {
-    borderColor: "transparent",
-    marginLeft: 10,
-    marginTop: 30
+    margin: 5,
+    // marginTop: 30,
+    borderColor: "black",
+    borderRadius: 5,
+    backgroundColor: "white"
+  
   }
 });
 
@@ -50,7 +61,7 @@ var mapStyle = [
     "elementType": "labels.text.fill",
     "stylers": [
       {
-        "color": "#ffffff"
+        "color": "#757575"
       }
     ]
   },
@@ -103,15 +114,6 @@ var mapStyle = [
     "stylers": [
       {
         "color": "#bdbdbd"
-      }
-    ]
-  },
-  {
-    "featureType": "landscape",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#ff00ff"
       }
     ]
   },
@@ -170,10 +172,28 @@ var mapStyle = [
   },
   {
     "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ff00ff"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
     "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#2c2c2c"
+        "color": "#ff00ff"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#ff00ff"
       }
     ]
   },
@@ -200,16 +220,7 @@ var mapStyle = [
     "elementType": "geometry",
     "stylers": [
       {
-        "color": "#373737"
-      }
-    ]
-  },
-  {
-    "featureType": "road.arterial",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#ffffff"
+        "color": "#ff00ff"
       }
     ]
   },
@@ -227,16 +238,7 @@ var mapStyle = [
     "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#ffffff"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "labels",
-    "stylers": [
-      {
-        "color": "#212121"
+        "color": "#ff00ff"
       }
     ]
   },
@@ -245,7 +247,7 @@ var mapStyle = [
     "elementType": "geometry",
     "stylers": [
       {
-        "color": "#4e4e4e"
+        "color": "#ff00ff"
       }
     ]
   },
@@ -254,16 +256,16 @@ var mapStyle = [
     "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#ffffff"
+        "color": "#ff00ff"
       }
     ]
   },
   {
     "featureType": "road.local",
-    "elementType": "geometry.fill",
+    "elementType": "geometry",
     "stylers": [
       {
-        "color": "#ffffff"
+        "color": "#ff00ff"
       }
     ]
   },
@@ -345,17 +347,22 @@ class App extends React.Component {
     const { search } = this.state;
         return (
           <View style={styles.container}>
-            {/* <View style={styles.calloutView} > */}
+            <View style={styles.notificationBar}></View>
+            <View style={styles.searchContainer}>
               <TextInput style={styles.calloutSearch}
-                placeholder={"Search"}
+                placeholder={"Starting point"}
+                placeholderTextColor={"black"}
               />
-            {/* </View> */}
-          <MapView
-            style={styles.mapFlex}
-            initialRegion={region}
-            customMapStyle={mapStyle}
-          />
-            
+              <TextInput style={styles.calloutSearch}
+                placeholder={"Destination"}
+                placeholderTextColor={"black"}
+              />
+            </View>
+            <MapView
+              style={styles.mapFlex}
+              initialRegion={region}
+              customMapStyle={mapStyle}
+            /> 
           </View>
         );
       }
