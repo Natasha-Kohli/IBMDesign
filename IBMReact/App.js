@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View, TextInput, Button, Alert } from 'react-native';
 import { MapView } from 'expo';
 
 const styles = StyleSheet.create({
@@ -332,14 +332,18 @@ class App extends React.Component {
     this.state = { 
       isLoading: true,
       markers: [],
+      displayMarkers: false
     };
   }
 
-  // state = {
-  //   search: '',
-  // };
+  _onPressButton = () => {
+    this.setState({ 
+      displayMarkers: true
+    })
+  }
 
   renderMarkers() {
+    if ( !this.state.displayMarkers ) return null;
     return this.state.isLoading
       ? null
       : this.state.markers.map((marker, index) => {
@@ -393,6 +397,12 @@ class App extends React.Component {
                 placeholder={"Destination"}
                 placeholderTextColor={"black"}
               />
+              <Button
+                onPress={this._onPressButton}
+                title="Go!"
+                color="#FF1493"
+                accessibilityLabel="Start your search"
+            />
             </View>
             <MapView
               style={styles.mapFlex}
