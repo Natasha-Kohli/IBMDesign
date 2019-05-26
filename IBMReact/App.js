@@ -21,15 +21,6 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     paddingBottom: 5
   },
-  // calloutView: {
-  //   flexDirection: "row",
-  //   backgroundColor: "rgba(255, 255, 255, 0.9)",
-  //   borderRadius: 10,
-  //   width: "40%",
-  //   marginLeft: "30%",
-  //   marginRight: "30%",
-  //   marginTop: 20,
-  // },
   calloutSearch: {
     margin: 5,
     // marginTop: 30,
@@ -324,6 +315,7 @@ var mapStyle = [
   }
 ]
 
+
 var region = {
   latitude: 40.7128,
   longitude: -74.0060,
@@ -331,17 +323,61 @@ var region = {
   longitudeDelta: 0.0421,
 };
 
+var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
+
 class App extends React.Component {
   
   constructor(props) {
     super(props);
     this.state = { 
+      isLoading: true,
+      markers: [],
     };
   }
 
-  state = {
-    search: '',
-  };
+  // state = {
+  //   search: '',
+  // };
+
+  renderMarkers() {
+    return this.state.isLoading
+      ? null
+      : this.state.markers.map((marker, index) => {
+          const coords = {
+            latitude: marker.latitude,
+            longitude: marker.longitude
+          };
+
+          const metadata = `Status: ${marker.statusValue}`;
+
+          return (
+            <MapView.Marker
+              key={index}
+              coordinate={coords}
+              title={marker.stationName}
+              description={metadata}
+            />
+          );
+        });
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    fetch(serverURL)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({ 
+          isLoading: false,
+          markers: responseJson.stationBeanList, 
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   render() {
     const { search } = this.state;
@@ -360,9 +396,12 @@ class App extends React.Component {
             </View>
             <MapView
               style={styles.mapFlex}
+              provder="google"
               initialRegion={region}
               customMapStyle={mapStyle}
-            /> 
+            >
+              {this.renderMarkers()}
+            </MapView>
           </View>
         );
       }
