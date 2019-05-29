@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, TextInput, Button, Alert } from 'react-native';
 import { MapView } from 'expo';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {createStackNavigator, createAppContainer} from 'react-navigation';
 
 const styles = StyleSheet.create({
   mapFlex: {
@@ -325,7 +327,10 @@ var region = {
 
 var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
 
-class App extends React.Component {
+class SearchScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Catch-A-Ride',
+  };
   
   constructor(props) {
     super(props);
@@ -341,6 +346,13 @@ class App extends React.Component {
       displayMarkers: true
     })
   }
+
+  _onStartFocus = () => {
+    const {navigate} = this.props.navigation;
+    navigate('GoogleLocations')
+  }
+
+  
 
   renderMarkers() {
     if ( !this.state.displayMarkers ) return null;
@@ -385,13 +397,40 @@ class App extends React.Component {
 
   render() {
     const { search } = this.state;
+    const {navigate} = this.props.navigation;
         return (
+          // <GooglePlacesAutocomplete
+          //       placeholder='Search'
+          //       minLength={2}
+          //       autoFocus={true}
+          //       returnKeyType={'search'}
+          //       listViewDisplayed={false}
+          //       fetchDetails={true}
+          //       onPress={(data, details = null) => { 
+          //         this.props.notifyChange(details.geometry.location);
+          //        }
+          //       }
+          //       query= {{
+          //         key: "AIzaSyAEtt0A-9cN4MEfTP_383SJHuobDHGSVZ8",
+          //         language: 'en'
+          //       }}
+          //       nearbyPlacesAPI='GooglePlacesSearch'
+          //       debounce={200}
+          //       styles={{
+          //         textInputContainer: {
+          //           backgroundColor: 'rgba(0,0,0,0)',
+          //           borderTopWidth: 0,
+          //           borderBottomWidth:0
+          //         }
+          //       }}
+          //     />
           <View style={styles.container}>
             <View style={styles.notificationBar}></View>
             <View style={styles.searchContainer}>
               <TextInput style={styles.calloutSearch}
                 placeholder={"Starting point"}
                 placeholderTextColor={"black"}
+                onFocus={this._onStartFocus}
               />
               <TextInput style={styles.calloutSearch}
                 placeholder={"Destination"}
@@ -402,7 +441,7 @@ class App extends React.Component {
                 title="Go!"
                 color="#FF1493"
                 accessibilityLabel="Start your search"
-            />
+              />
             </View>
             <MapView
               style={styles.mapFlex}
@@ -417,6 +456,75 @@ class App extends React.Component {
       }
 
 }
+
+// placeholder
+class GoogleLocationsScreen extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = { 
+      isLoading: true,
+      markers: [],
+      displayMarkers: false
+    };
+  }
+
+  render () {
+    return (
+      <View style={styles.container}>
+        <View style={styles.notificationBar}></View>
+        <GooglePlacesAutocomplete
+          placeholder='Search'
+          minLength={2}
+          autoFocus={true}
+          returnKeyType={'search'}
+          listViewDisplayed={false}
+          fetchDetails={true}
+          onPress={(data, details = null) => { 
+            this.props.notifyChange(details.geometry.location);
+            }
+          }
+          query= {{
+            key: "AIzaSyAEtt0A-9cN4MEfTP_383SJHuobDHGSVZ8",
+            language: 'en'
+          }}
+          nearbyPlacesAPI='GooglePlacesSearch'
+          debounce={200}
+          styles={{
+            textInputContainer: {
+              backgroundColor: 'rgba(255,192,203,0)',
+              borderTopWidth: 0,
+              borderBottomWidth:0
+            },
+            textInput: {
+              marginLeft: 0,
+              marginRight: 0,
+              height: 38,
+              color: '#331524',
+              fontSize: 16
+            },
+            predefinedPlacesDescription: {
+              color: '#ff69b4'
+            },
+          }}
+        /> 
+      </View> 
+    )
+  }
+}
+ 
+const MainNavigator = createStackNavigator({
+  Search: {screen: SearchScreen,
+    navigationOptions: {
+      header: null,
+    }},
+  GoogleLocations: {screen: GoogleLocationsScreen,
+    navigationOptions: {
+      header: null,
+    }},
+});
+
+const App = createAppContainer(MainNavigator);
 
 export default App;
 
