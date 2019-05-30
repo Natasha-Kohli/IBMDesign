@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, View, TextInput, Button, TimePickerAndroid } from 'react-native';
 import { MapView } from 'expo';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {createStackNavigator, createAppContainer} from 'react-navigation';
@@ -19,9 +19,13 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     padding: 15
   },
-  searchContainer: {
+  directionsContainer: {
     backgroundColor: "black",
-    paddingBottom: 5
+    paddingBottom: 5,
+    flexDirection: "row"
+  },
+  searchContainer: {
+    flex: 1
   },
   calloutSearch: {
     margin: 5,
@@ -337,14 +341,26 @@ class SearchScreen extends React.Component {
     this.state = { 
       isLoading: true,
       markers: [],
-      displayMarkers: false
+      displayMarkers: false,
+      timeHour: 12,
+      timeMinute: 0
     };
   }
 
-  _onPressButton = () => {
+  _onPressGo = () => {
     this.setState({ 
       displayMarkers: true
     })
+  }
+
+  _onPressTime = () => {
+    let newTime = TimePickerAndroid.open({hour: 12, minute: 0, is24Hour: false});
+    if (newTime.action == TimePickerAndroid.timeSetAction) {
+      this.setState({
+        timeHour: newTime.hour,
+        timeMinute: newTime.minute
+      });
+    }
   }
 
   _onStartFocus = () => {
@@ -426,23 +442,31 @@ class SearchScreen extends React.Component {
           //     />
           <View style={styles.container}>
             <View style={styles.notificationBar}></View>
-            <View style={styles.searchContainer}>
-              <TextInput style={styles.calloutSearch}
-                placeholder={"Starting point"}
-                placeholderTextColor={"black"}
-                onFocus={this._onStartFocus}
-              />
-              <TextInput style={styles.calloutSearch}
-                placeholder={"Destination"}
-                placeholderTextColor={"black"}
-              />
+            <View style={styles.directionsContainer}>
+              <View style={styles.searchContainer}>
+                <TextInput style={styles.calloutSearch}
+                  placeholder={"Starting point"}
+                  placeholderTextColor={"black"}
+                  onFocus={this._onStartFocus}
+                />
+                <TextInput style={styles.calloutSearch}
+                  placeholder={"Destination"}
+                  placeholderTextColor={"black"}
+                /> 
+              </View>
               <Button
-                onPress={this._onPressButton}
+                onPress={this._onPressTime}
+                title="Time"
+                color="#FF1493"
+                accessibilityLabel="Pick a time"
+              />
+            </View>
+              <Button
+                onPress={this._onPressGo}
                 title="Go!"
                 color="#FF1493"
                 accessibilityLabel="Start your search"
               />
-            </View>
             <MapView
               style={styles.mapFlex}
               provder="google"
