@@ -3,6 +3,7 @@ import { StyleSheet, View, TextInput, Button, TimePickerAndroid } from 'react-na
 import { MapView } from 'expo';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {createStackNavigator, createAppContainer} from 'react-navigation';
+import './global.js'
 
 const styles = StyleSheet.create({
   mapFlex: {
@@ -343,9 +344,11 @@ class SearchScreen extends React.Component {
       markers: [],
       displayMarkers: false,
       timeHour: 12,
-      timeMinute: 0
+      timeMinute: 0,
+      startText: "Search Pickup Location"
     };
   }
+
 
   _onPressGo = () => {
     this.setState({ 
@@ -366,9 +369,7 @@ class SearchScreen extends React.Component {
   _onStartFocus = () => {
     const {navigate} = this.props.navigation;
     navigate('GoogleLocations')
-  }
-
-  
+  } 
 
   renderMarkers() {
     if ( !this.state.displayMarkers ) return null;
@@ -414,82 +415,58 @@ class SearchScreen extends React.Component {
   render() {
     const { search } = this.state;
     const {navigate} = this.props.navigation;
-        return (
-          // <GooglePlacesAutocomplete
-          //       placeholder='Search'
-          //       minLength={2}
-          //       autoFocus={true}
-          //       returnKeyType={'search'}
-          //       listViewDisplayed={false}
-          //       fetchDetails={true}
-          //       onPress={(data, details = null) => { 
-          //         this.props.notifyChange(details.geometry.location);
-          //        }
-          //       }
-          //       query= {{
-          //         key: "AIzaSyAEtt0A-9cN4MEfTP_383SJHuobDHGSVZ8",
-          //         language: 'en'
-          //       }}
-          //       nearbyPlacesAPI='GooglePlacesSearch'
-          //       debounce={200}
-          //       styles={{
-          //         textInputContainer: {
-          //           backgroundColor: 'rgba(0,0,0,0)',
-          //           borderTopWidth: 0,
-          //           borderBottomWidth:0
-          //         }
-          //       }}
-          //     />
-          <View style={styles.container}>
-            <View style={styles.notificationBar}></View>
-            <View style={styles.directionsContainer}>
-              <View style={styles.searchContainer}>
-                <TextInput style={styles.calloutSearch}
-                  placeholder={"Starting point"}
-                  placeholderTextColor={"black"}
-                  onFocus={this._onStartFocus}
-                />
-                <TextInput style={styles.calloutSearch}
-                  placeholder={"Destination"}
-                  placeholderTextColor={"black"}
-                /> 
-              </View>
-              <Button
-                onPress={this._onPressTime}
-                title="Time"
-                color="#FF1493"
-                accessibilityLabel="Pick a time"
-              />
-            </View>
-              <Button
-                onPress={this._onPressGo}
-                title="Go!"
-                color="#FF1493"
-                accessibilityLabel="Start your search"
-              />
-            <MapView
-              style={styles.mapFlex}
-              provder="google"
-              initialRegion={region}
-              customMapStyle={mapStyle}
-            >
-              {this.renderMarkers()}
-            </MapView>
+    const { params } = this.props.navigation.state;
+  
+    return (
+      <View style={styles.container}>
+        <View style={styles.notificationBar}></View> 
+        <View style={styles.directionsContainer}>
+          <View style={styles.searchContainer}>
+            <TextInput style={styles.calloutSearch}
+              // placeholder={this.state.startText}
+              placeholder={global.startLocation}
+              placeholderTextColor={"black"}
+              onFocus={this._onStartFocus}
+            />
+            {/* <TextInput style={styles.calloutSearch}
+              placeholder={"Destination"}
+              placeholderTextColor={"black"}
+            />  */}
           </View>
-        );
-      }
+          <Button
+            onPress={this._onPressTime}
+            title="Time"
+            color="#FF1493"
+            accessibilityLabel="Pick a time"
+          />
+        </View>
+          <Button
+            onPress={this._onPressGo}
+            title="Go!"
+            color="#FF1493"
+            accessibilityLabel="Start your search"
+          />
+        <MapView
+          style={styles.mapFlex}
+          provder="google"
+          initialRegion={region}
+          customMapStyle={mapStyle}
+        >
+          {this.renderMarkers()}
+        </MapView>
+      </View>
+    );
+  }
 
 }
 
-// placeholder
+// new screen
 class GoogleLocationsScreen extends React.Component {
-  
   constructor(props) {
     super(props);
     this.state = { 
-      isLoading: true,
-      markers: [],
-      displayMarkers: false
+      displayLocation: "",
+      locationCoords: ""
     };
   }
 
@@ -498,14 +475,18 @@ class GoogleLocationsScreen extends React.Component {
       <View style={styles.container}>
         <View style={styles.notificationBar}></View>
         <GooglePlacesAutocomplete
-          placeholder='Search'
+          placeholder='Search Pickup Location'
           minLength={2}
           autoFocus={true}
           returnKeyType={'search'}
           listViewDisplayed={false}
           fetchDetails={true}
           onPress={(data, details = null) => { 
-            this.props.notifyChange(details.geometry.location);
+            console.log(JSON.stringify(data))
+            global.startLocation = data.description
+            global.startCoords = details.geometry.location;
+            const {navigate} = this.props.navigation;
+            navigate('Search', { location: this.state.displayLocation });
             }
           }
           query= {{
