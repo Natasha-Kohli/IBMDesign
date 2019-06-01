@@ -41,6 +41,8 @@ max_lat, max_lon = max(uber_data['Lat']), max(uber_data['Lon'])
 max_x_dist = haversine((min_lat, min_lon), (max_lat, min_lon))
 max_y_dist = haversine((min_lat, min_lon), (min_lat, max_lon))
 
+print(f'min_lat {min_lat}, min_lon {min_lon}, max_lat {max_lat}, max_lon {max_lon}')
+
 x_nums, y_nums = 1000, 1000 # of cells in each axis
 x_cell_size = max_x_dist / x_nums # in km
 y_cell_size = max_y_dist / y_nums # in km
