@@ -1,8 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, Button, TimePickerAndroid } from 'react-native';
+import { StyleSheet, View, TextInput, Button, TimePickerAndroid, FlatList } from 'react-native';
 import { MapView } from 'expo';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {createStackNavigator, createAppContainer} from 'react-navigation';
+import { List, ListItem } from 'react-native-elements'
+
 import './global.js'
 
 const styles = StyleSheet.create({
@@ -354,6 +356,8 @@ class SearchScreen extends React.Component {
     this.setState({ 
       displayMarkers: true
     })
+    const {navigate} = this.props.navigation;
+    navigate('Results')
   }
 
   _onPressTime = () => {
@@ -423,7 +427,6 @@ class SearchScreen extends React.Component {
         <View style={styles.directionsContainer}>
           <View style={styles.searchContainer}>
             <TextInput style={styles.calloutSearch}
-              // placeholder={this.state.startText}
               placeholder={global.startLocation}
               placeholderTextColor={"black"}
               onFocus={this._onStartFocus}
@@ -517,6 +520,47 @@ class GoogleLocationsScreen extends React.Component {
     )
   }
 }
+
+
+// new screen
+class ResultsScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { 
+      data: [
+        {
+          name: 'Amy Farha',
+          avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+          subtitle: 'Vice President'
+        },
+        {
+          name: 'Chris Jackson',
+          avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+          subtitle: 'Vice Chairman'
+        }]
+    };
+  }
+
+  keyExtractor = (item, index) => index.toString()
+
+  renderItem = ({ item }) => (
+    <ListItem
+      title={item.name}
+      subtitle={item.subtitle}
+      leftAvatar={{ source: { uri: item.avatar_url } }}
+    />
+  )
+
+  render () {
+    return (
+      <FlatList
+        keyExtractor={this.keyExtractor}
+        data={this.state.data}
+        renderItem={this.renderItem}
+      />
+    )
+  }
+}
  
 const MainNavigator = createStackNavigator({
   Search: {screen: SearchScreen,
@@ -527,8 +571,11 @@ const MainNavigator = createStackNavigator({
     navigationOptions: {
       header: null,
     }},
+  Results: {screen: ResultsScreen,
+    navigationOptions: {
+    }},
 });
-
+ 
 const App = createAppContainer(MainNavigator);
 
 export default App;
