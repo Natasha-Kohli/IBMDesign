@@ -529,14 +529,14 @@ class ResultsScreen extends React.Component {
     this.state = { 
       data: [
         {
-          name: 'Amy Farha',
+          name: 'Leave Now',
           avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-          subtitle: 'Vice President'
+          subtitle: 'It\'s quicker'
         },
         {
-          name: 'Chris Jackson',
+          name: 'Leave Then',
           avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-          subtitle: 'Vice Chairman'
+          subtitle: 'It\'s better'
         }]
     };
   }
