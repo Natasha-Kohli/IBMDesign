@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, Button, TimePickerAndroid, FlatList } from 'react-native';
+import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid, FlatList } from 'react-native';
 import { MapView } from 'expo';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {createStackNavigator, createAppContainer} from 'react-navigation';
@@ -36,7 +36,15 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderRadius: 5,
     backgroundColor: "white"
-  
+  },
+  headline: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: "#FF1493",
+    fontSize: 18,
+    marginTop: 0,
+    width: 200,
+    backgroundColor: 'black',
   }
 });
 
@@ -347,27 +355,69 @@ class SearchScreen extends React.Component {
       displayMarkers: false,
       timeHour: 12,
       timeMinute: 0,
-      startText: "Search Pickup Location"
+      startText: "Enter Pickup Location",
+      timeString: "Enter Departure Time"
     };
   }
 
 
   _onPressGo = () => {
-    this.setState({ 
-      displayMarkers: true
-    })
-    const {navigate} = this.props.navigation;
-    navigate('Results')
+    if (!((global.startCoords === null) || (global.timeHour === null))) {
+      this.setState({ 
+        displayMarkers: true
+      })
+      const {navigate} = this.props.navigation;
+      navigate('Results')
+    } else if (global.startCoords === null) {
+      Alert.alert(
+        'Wait a minute...',
+        'We don\'t know where you\'re leaving from.',
+        [
+          {text: 'Go back', onPress: () => console.log('Go back was pressed'), style: 'cancel'},
+          {text: 'Take me there', onPress: () => {
+            const {navigate} = this.props.navigation;
+            navigate('GoogleLocations')
+          }} 
+        ],
+        {cancelable: false},
+      );
+    }
+    else if (global.timeHour === null) {
+      Alert.alert(
+        'Wait a minute...',
+        'We don\'t know when you want to leave.',
+        [
+          {text: 'Go back', onPress: () => console.log('Go back was pressed'), style: 'cancel'},
+          {text: 'Take me there', onPress: this._onPressTime } 
+        ],
+        {cancelable: false},
+      );
+    }
   }
 
-  _onPressTime = () => {
-    let newTime = TimePickerAndroid.open({hour: 12, minute: 0, is24Hour: false});
-    if (newTime.action == TimePickerAndroid.timeSetAction) {
-      this.setState({
-        timeHour: newTime.hour,
-        timeMinute: newTime.minute
-      });
+   _onPressTime = async () => {
+    console.log("Will the time change?");
+    const {action, hour, minute} = await TimePickerAndroid.open({
+      hour:  new Date().getHours(),
+      minute: new Date().getMinutes(),
+      is24Hour: false
+    });
+    if (action !== TimePickerAndroid.dismissedAction) {
+      // this.setState({
+      //   timeHour: hour,
+      //   timeMinute: minute,
+      //   timeString: "Leaving at " + String(hour % 12) + ":" 
+      //   + ((minute < 10) ? "0" + String(minute) : String(minute)) 
+      //   + ((hour > 12) ? " pm" : " am")
+      // }); 
+      global.timeHour = hour,
+      global.timeMinute = minute,
+      global.timeString = "Leaving at " + String(hour % 12) + ":" 
+      + ((minute < 10) ? "0" + String(minute) : String(minute)) 
+      + ((hour > 12) ? " pm" : " am")
+      console.log("HELLO, the time is changing: " + "Leaving at " + String(hour) + ":" + String(minute));
     }
+    console.log("end of _onPressTime");
   }
 
   _onStartFocus = () => {
@@ -435,13 +485,18 @@ class SearchScreen extends React.Component {
               placeholder={"Destination"}
               placeholderTextColor={"black"}
             />  */}
+            <TextInput style={styles.calloutSearch}
+              placeholder={global.timeString}
+              placeholderTextColor={"black"}
+              onFocus={this._onPressTime}
+            />
+              {/* <Button
+                onPress={this._onPressTime}
+                title="Time"
+                color="#FF1493"
+                accessibilityLabel="Pick a time"
+              /> */}
           </View>
-          <Button
-            onPress={this._onPressTime}
-            title="Time"
-            color="#FF1493"
-            accessibilityLabel="Pick a time"
-          />
         </View>
           <Button
             onPress={this._onPressGo}
@@ -486,7 +541,7 @@ class GoogleLocationsScreen extends React.Component {
           fetchDetails={true}
           onPress={(data, details = null) => { 
             console.log(JSON.stringify(data))
-            global.startLocation = data.description
+            global.startLocation = data.description;
             global.startCoords = details.geometry.location;
             const {navigate} = this.props.navigation;
             navigate('Search', { location: this.state.displayLocation });
@@ -500,7 +555,8 @@ class GoogleLocationsScreen extends React.Component {
           debounce={200}
           styles={{
             textInputContainer: {
-              backgroundColor: 'rgba(255,192,203,0)',
+              // backgroundColor: 'rgba(0,0,0,0)', //These two don't seem to do anything
+              // color: 'rgba(0,0,0,0)',
               borderTopWidth: 0,
               borderBottomWidth:0
             },
@@ -508,7 +564,7 @@ class GoogleLocationsScreen extends React.Component {
               marginLeft: 0,
               marginRight: 0,
               height: 38,
-              color: '#331524',
+              color: "#FF1493",
               fontSize: 16
             },
             predefinedPlacesDescription: {
@@ -524,6 +580,12 @@ class GoogleLocationsScreen extends React.Component {
 
 // new screen
 class ResultsScreen extends React.Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Departing From: " + global.startLocation
+    };
+  };
+
   constructor(props) {
     super(props);
     this.state = { 
@@ -553,11 +615,14 @@ class ResultsScreen extends React.Component {
 
   render () {
     return (
+      <View style={styles.container}>
+        <View style={styles.notificationBar}></View>
       <FlatList
         keyExtractor={this.keyExtractor}
         data={this.state.data}
         renderItem={this.renderItem}
       />
+      </View>
     )
   }
 }
