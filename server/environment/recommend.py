@@ -25,7 +25,7 @@ def get_adj_clusters(cluster_x, cluster_y, num):
     q = queue.Queue()
 
     while len(cluster_set) < num or not q.empty():
-        
+        pass
 
 
  
