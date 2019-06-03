@@ -1,7 +1,7 @@
 import inflection
 from sqlalchemy.ext.declarative import (declared_attr, declarative_base,
                                         has_inherited_table)
-from sqlalchemy import (Column, BigInteger, String, DateTime, ForeignKey, UniqueConstraint)
+from sqlalchemy import (Column, Integer, BigInteger, String, DateTime, ForeignKey, UniqueConstraint)
 from geoalchemy2 import Geography
 
 class Base(object):
@@ -45,3 +45,5 @@ class Pickup(Base):
     location = Column(Geography(geometry_type='POINT', srid=4326))
     base = Column(String(63))
     intersection = Column(BigInteger, ForeignKey('intersection.id'))
+    week_chunk = Column(Integer) 
+    month_chunk = Column(Integer)
