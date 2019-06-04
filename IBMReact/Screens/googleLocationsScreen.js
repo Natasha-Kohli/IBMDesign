@@ -38,6 +38,7 @@ class GoogleLocationsScreen extends React.Component {
           fetchDetails={true}
           onPress={(data, details = null) => { 
             console.log(JSON.stringify(data))
+            global.data = data;
             global.startLocation = data.description;
             global.briefLocation = data.structured_formatting.main_text;
             global.startCoords = details.geometry.location;

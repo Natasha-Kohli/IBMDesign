@@ -42,7 +42,7 @@ class Search extends React.Component {
       timeHour: 12,
       timeMinute: 0,
       startText: "Enter Pickup Location",
-      timeString: moment().format("h:mm A"),
+      timeString: "Enter Departure Time", //moment().format("h:mm A"),
       displayMarkers: this.props.displayMarkers
     };
   }
