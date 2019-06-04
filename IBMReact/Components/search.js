@@ -1,5 +1,6 @@
 import React from 'react';
-import { Alert, StyleSheet, View, TextInput, Button, TimePickerAndroid } from 'react-native';
+import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid } from 'react-native';
+import moment from 'moment';
 
 const styles = StyleSheet.create({
   notificationBar: {
@@ -18,7 +19,9 @@ const styles = StyleSheet.create({
     margin: 5,
     borderColor: "black",
     borderRadius: 5,
-    backgroundColor: "white"
+    backgroundColor: "white",
+    paddingLeft: 10,
+    fontWeight: "bold"
   },
   headline: {
     textAlign: 'center',
@@ -39,7 +42,7 @@ class Search extends React.Component {
       timeHour: 12,
       timeMinute: 0,
       startText: "Enter Pickup Location",
-      timeString: "Enter Departure Time",
+      timeString: moment().format("h:mm A"),
       displayMarkers: this.props.displayMarkers
     };
   }
@@ -87,11 +90,19 @@ class Search extends React.Component {
       is24Hour: false
     });
     if (action !== TimePickerAndroid.dismissedAction) {
-      global.timeHour = hour,
-      global.timeMinute = minute,
-      global.timeString = "Leaving at " + String(hour % 12) + ":" 
-      + ((minute < 10) ? "0" + String(minute) : String(minute)) 
-      + ((hour > 12) ? " pm" : " am")
+      this.setState({
+        timeHour: hour,
+        timeMinute: minute,
+        timeString: moment().hour(hour).minute(minute).format("h:mm A")
+        // "Leaving at " + String(hour % 12) + ":" 
+        // + ((minute < 10) ? "0" + String(minute) : String(minute)) 
+        // + ((hour > 12) ? " pm" : " am")
+      })
+      // global.timeHour = hour,
+      // global.timeMinute = minute,
+      // global.timeString = "Leaving at " + String(hour % 12) + ":" 
+      // + ((minute < 10) ? "0" + String(minute) : String(minute)) 
+      // + ((hour > 12) ? " pm" : " am")
       console.log("HELLO, the time is changing: " + "Leaving at " + String(hour) + ":" + String(minute));
     }
     console.log("end of _onPressTime");
@@ -118,10 +129,10 @@ class Search extends React.Component {
               onFocus={this._onStartFocus}
             />
             <TextInput style={styles.calloutSearch}
-              placeholder={global.timeString}
               placeholderTextColor={"black"}
               onFocus={this._onPressTime}
-            />
+              placeholder={this.state.timeString}
+            /> 
           </View>
         </View>
           <Button
