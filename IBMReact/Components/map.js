@@ -308,13 +308,12 @@ class Map extends React.Component {
     super(props);
     this.state = { 
       isLoading: true,
-      markers: [],
-      displayMarkers: false
+      markers: []
     };
   }
 
   renderMarkers() {
-    if ( !this.state.displayMarkers ) return null;
+    if ( !this.props.displayMarkers ) return null;
     return this.state.isLoading
       ? null
       : this.state.markers.map((marker, index) => {

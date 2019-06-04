@@ -39,7 +39,8 @@ class Search extends React.Component {
       timeHour: 12,
       timeMinute: 0,
       startText: "Enter Pickup Location",
-      timeString: "Enter Departure Time"
+      timeString: "Enter Departure Time",
+      displayMarkers: this.props.displayMarkers
     };
   }
 
@@ -48,6 +49,7 @@ class Search extends React.Component {
       this.setState({ 
         displayMarkers: true
       })
+      this.props.handleSearch(true);
       const {navigate} = this.props.navigation;
       navigate('Results')
     } else if (global.startCoords === null) {
@@ -128,6 +130,7 @@ class Search extends React.Component {
             color="#FF1493"
             accessibilityLabel="Start your search"
           />
+          {console.log(this.state)}
       </View>
     );
   }
