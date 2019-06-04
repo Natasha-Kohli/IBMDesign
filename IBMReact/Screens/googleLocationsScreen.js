@@ -39,6 +39,7 @@ class GoogleLocationsScreen extends React.Component {
           onPress={(data, details = null) => { 
             console.log(JSON.stringify(data))
             global.startLocation = data.description;
+            global.briefLocation = data.structured_formatting.main_text;
             global.startCoords = details.geometry.location;
             const {navigate} = this.props.navigation;
             navigate('Search', { location: this.state.displayLocation });

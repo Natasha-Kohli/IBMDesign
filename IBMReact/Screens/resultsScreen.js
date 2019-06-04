@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 class ResultsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "Departing From: " + global.startLocation
+      title: "Departing From: " + global.briefLocation
     };
   };
 

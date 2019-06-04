@@ -83,13 +83,14 @@ class Search extends React.Component {
   }
 
   _onPressTime = async () => {
-    console.log("Will the time change?");
     const {action, hour, minute} = await TimePickerAndroid.open({
       hour:  new Date().getHours(),
       minute: new Date().getMinutes(),
       is24Hour: false
     });
     if (action !== TimePickerAndroid.dismissedAction) {
+      global.timeHour = hour;
+      global.timeMinute = minute;
       this.setState({
         timeHour: hour,
         timeMinute: minute,
@@ -103,7 +104,6 @@ class Search extends React.Component {
       // global.timeString = "Leaving at " + String(hour % 12) + ":" 
       // + ((minute < 10) ? "0" + String(minute) : String(minute)) 
       // + ((hour > 12) ? " pm" : " am")
-      console.log("HELLO, the time is changing: " + "Leaving at " + String(hour) + ":" + String(minute));
     }
     console.log("end of _onPressTime");
   }

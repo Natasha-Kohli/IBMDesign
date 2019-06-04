@@ -301,6 +301,12 @@ let region = {
 };
 
 var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
+var staticServerURL = "http://ourserver.com/";
+
+function addParameterToURL(_url, param){
+  _url += (_url.split('?')[1] ? '&':'?') + param;
+  return _url;
+}
 
 class Map extends React.Component {
   
@@ -308,12 +314,14 @@ class Map extends React.Component {
     super(props);
     this.state = { 
       isLoading: true,
-      markers: []
+      markers: [],
+      loadedURL: null
     };
   }
 
   renderMarkers() {
     if ( !this.props.displayMarkers ) return null;
+    this.fetchData();
     return this.state.isLoading
       ? null
       : this.state.markers.map((marker, index) => {
@@ -323,7 +331,7 @@ class Map extends React.Component {
           };
 
           const metadata = `Status: ${marker.statusValue}`;
-
+ 
           return (
             <MapView.Marker
               key={index}
@@ -335,17 +343,27 @@ class Map extends React.Component {
         });
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
+  // componentDidMount() {
+  //   this.fetchData();
+  // }
+  
 
   fetchData() {
+    var requestURL = staticServerURL;
+    requestURL = addParameterToURL(requestURL, 'hour=' + String(global.timeHour));
+    requestURL = addParameterToURL(requestURL, 'minute=' + String(global.timeMinute));
+    requestURL = addParameterToURL(requestURL, 'lat=' + String(global.startCoords.lat));
+    requestURL = addParameterToURL(requestURL, 'lng=' + String(global.startCoords.lng)); 
+    console.log(requestURL);
+    if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
+
     fetch(serverURL)
-      .then((response) => response.json())
-      .then((responseJson) => {
+      .then((response) => response.json()) 
+      .then((responseJson) => { 
         this.setState({ 
           isLoading: false,
           markers: responseJson.stationBeanList, 
+          loadedURL: requestURL
         });
       })
       .catch((error) => {
