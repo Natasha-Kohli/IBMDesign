@@ -28,15 +28,6 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderRadius: 5,
     backgroundColor: "white"
-  },
-  headline: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: "#FF1493",
-    fontSize: 18,
-    marginTop: 0,
-    width: 200,
-    backgroundColor: 'black',
   }
 });
 
@@ -54,7 +45,6 @@ class SearchScreen extends React.Component {
       timeString: "Enter Departure Time"
     };
   }
-
 
   _onPressGo = () => {
     if (!((global.startCoords === null) || (global.timeHour === null))) {
@@ -98,13 +88,6 @@ class SearchScreen extends React.Component {
       is24Hour: false
     });
     if (action !== TimePickerAndroid.dismissedAction) {
-      // this.setState({
-      //   timeHour: hour,
-      //   timeMinute: minute,
-      //   timeString: "Leaving at " + String(hour % 12) + ":" 
-      //   + ((minute < 10) ? "0" + String(minute) : String(minute)) 
-      //   + ((hour > 12) ? " pm" : " am")
-      // }); 
       global.timeHour = hour,
       global.timeMinute = minute,
       global.timeString = "Leaving at " + String(hour % 12) + ":" 
@@ -120,9 +103,6 @@ class SearchScreen extends React.Component {
     navigate('GoogleLocations')
   } 
 
-  componentDidMount() {
-  }
-
   render() {
   
     return (
@@ -135,21 +115,11 @@ class SearchScreen extends React.Component {
               placeholderTextColor={"black"}
               onFocus={this._onStartFocus}
             /> 
-            {/* <TextInput style={styles.calloutSearch}
-              placeholder={"Destination"}
-              placeholderTextColor={"black"}
-            />  */}
             <TextInput style={styles.calloutSearch}
               placeholder={global.timeString}
               placeholderTextColor={"black"}
               onFocus={this._onPressTime}
             />
-              {/* <Button
-                onPress={this._onPressTime}
-                title="Time"
-                color="#FF1493"
-                accessibilityLabel="Pick a time"
-              /> */}
           </View>
           </View>
           <Button

@@ -1,12 +1,7 @@
 import React from 'react';
-import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid, FlatList } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import {createStackNavigator, createAppContainer} from 'react-navigation';
-import { List, ListItem } from 'react-native-elements'
-
 import '../global.js';
-import Map from '../Components/map.js';
-import Search from '../Components/search.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,29 +13,6 @@ const styles = StyleSheet.create({
   notificationBar: {
     backgroundColor: "black",
     padding: 15
-  },
-  directionsContainer: {
-    backgroundColor: "black",
-    paddingBottom: 5,
-    flexDirection: "row"
-  },
-  searchContainer: {
-    flex: 1
-  },
-  calloutSearch: {
-    margin: 5,
-    borderColor: "black",
-    borderRadius: 5,
-    backgroundColor: "white"
-  },
-  headline: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: "#FF1493",
-    fontSize: 18,
-    marginTop: 0,
-    width: 200,
-    backgroundColor: 'black',
   }
 });
 
