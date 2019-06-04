@@ -19,7 +19,9 @@ const styles = StyleSheet.create({
     margin: 5,
     borderColor: "black",
     borderRadius: 5,
-    backgroundColor: "white"
+    backgroundColor: "white",
+    paddingLeft: 10,
+    fontWeight: "bold"
   },
   headline: {
     textAlign: 'center',
