@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, FlatList, SearchBar } from 'react-native';
+import { StyleSheet, View, FlatList, TextInput } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import '../global.js';
 
@@ -43,7 +43,7 @@ class ResultsScreen extends React.Component {
   keyExtractor = (item, index) => index.toString()
 
   // renderHeader = () => {
-  //   return <SearchBar placeholder="Type Here..." lightTheme round />;
+  //   return <TextInput placeholder="Type Here..." />;
   // };
 
   renderSeparator = () => {
