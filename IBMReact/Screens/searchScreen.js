@@ -275,20 +275,6 @@ class SearchScreen extends React.Component {
             color="#FF1493"
             accessibilityLabel="Start your search"
           />
-          {/* <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.visibleModal}
-          // onRequestClose={() => {
-          //   this.visibleModal(false)
-          // }}
-          >
-            <TextInput></TextInput>
-            <Button 
-              title="Update"
-              onPress={this.visibleModal(false)}
-            />
-          </Modal> */}
           <MapView
           style={styles.mapFlex}
           provder="google"
