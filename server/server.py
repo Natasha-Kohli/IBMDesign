@@ -5,7 +5,7 @@ import json
 
 
 app = Flask(__name__)
-app.debug = True
+app.debug = False # Cade must set false. No one else must do this. please ignore
 
 # input lat, long, dayofweeknum, monthdaynum, chunkindex (15-min)
 @app.route("/testpredict", methods=['GET'])
@@ -47,4 +47,4 @@ def hello():
     return "Hello World!"
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')
