@@ -20,14 +20,7 @@ Y_CELL_SIZE = MAX_Y_DIST / Y_NUM_CELLS # in km
 
 CLF_NAME = 'randf_trained.joblib'
 MODEL_DIR = '../'
-clf = None
-
-
-def get_clf():
-    global clf
-    if not clf:
-        clf = load(os.path.join(MODEL_DIR, CLF_NAME))
-    return clf
+clf = load(os.path.join(MODEL_DIR, CLF_NAME))
 
 # Returns ClusterCoordinateX, ClusterCoordinateY
 def loc_to_cluster(lat, lon):
@@ -64,7 +57,7 @@ def get_row_with_pred(row, clf, day, month, chunkIdx, cursor):
             'nrides' : clf.predict([[row[0], row[1], day, month, chunkIdx]]).tolist()[0]}
 
 def get_ranked_clusters(adj_clusters, day, month, chunkIdx, limit, cursor):
-    clf = get_clf()
+    global clf
     clusters = [get_row_with_pred(row, clf, day, month, chunkIdx, cursor) for row in adj_clusters]
     clusters.sort(reverse=True, key=(lambda row : row['nrides']))
     if limit > 0:
