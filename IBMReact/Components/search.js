@@ -17,9 +17,10 @@ const styles = StyleSheet.create({
   },
   calloutSearch: {
     margin: 5,
-    borderColor: "black",
+    borderColor: "white",
+    borderWidth: 1,
     borderRadius: 5,
-    backgroundColor: "white",
+    backgroundColor: "black",
     paddingLeft: 10,
     fontWeight: "bold"
   },
@@ -42,7 +43,7 @@ class Search extends React.Component {
       timeHour: 12,
       timeMinute: 0,
       startText: "Enter Pickup Location",
-      timeString: "Enter Departure Time", //moment().format("h:mm A"),
+      timeString: "Choose Departure Time", //moment().format("h:mm A"),
       displayMarkers: this.props.displayMarkers
     };
   }
@@ -125,14 +126,19 @@ class Search extends React.Component {
           <View style={styles.searchContainer}>
             <TextInput style={styles.calloutSearch}
               placeholder={global.startLocation}
-              placeholderTextColor={"black"}
+              placeholderTextColor={"white"}
               onFocus={this._onStartFocus}
             />
-            <TextInput style={styles.calloutSearch}
+            {/* <TextInput style={styles.calloutSearch}
               placeholderTextColor={"black"}
               onFocus={this._onPressTime}
               placeholder={this.state.timeString}
-            /> 
+            />  */}
+            <Button 
+              onPress={this._onPressTime}
+              title={this.state.timeString}
+              color="black"
+            />
           </View>
         </View>
           <Button
