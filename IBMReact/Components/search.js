@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid } from 'react-native';
+import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid, TouchableOpacity } from 'react-native';
 import moment from 'moment';
 
 const styles = StyleSheet.create({
@@ -15,6 +15,10 @@ const styles = StyleSheet.create({
   searchContainer: {
     flex: 1
   },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "center"
+  },
   calloutSearch: {
     margin: 5,
     borderColor: "white",
@@ -22,6 +26,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "black",
     paddingLeft: 10,
+    fontWeight: "bold"
+  },
+  buttonStyle: {
+    color: "black",
+    borderColor: "white",
+    borderWidth: 1,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 35,
+    paddingRight: 35
+  },
+  buttonText: {
+    color: "white",
     fontWeight: "bold"
   },
   headline: {
@@ -129,16 +146,40 @@ class Search extends React.Component {
               placeholderTextColor={"white"}
               onFocus={this._onStartFocus}
             />
-            {/* <TextInput style={styles.calloutSearch}
-              placeholderTextColor={"black"}
-              onFocus={this._onPressTime}
-              placeholder={this.state.timeString}
-            />  */}
-            <Button 
-              onPress={this._onPressTime}
-              title={this.state.timeString}
-              color="black"
-            />
+            <View style={styles.filterContainer}>
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                onPress={this._onPressTime}
+              >
+                <Text style={styles.buttonText}> Date </Text>
+              </TouchableOpacity> 
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                onPress={this._onPressTime}
+              >
+                <Text style={styles.buttonText}> Time </Text>
+              </TouchableOpacity> 
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                onPress={this._onPressTime}
+              >
+                <Text style={styles.buttonText}> Radius </Text>
+              </TouchableOpacity> 
+                {/* onPress={this._onPressTime}
+                title={this.state.timeString}
+                color="black"
+              /> */}
+              {/* <Button 
+                onPress={this._onPressTime}
+                title={"Time"}
+                color="black"
+              />
+              <Button 
+                onPress={this._onPressTime}
+                title={"Radius"}
+                color="black"
+              /> */}
+            </View>
           </View>
         </View>
           <Button
