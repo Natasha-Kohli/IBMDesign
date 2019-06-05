@@ -1,7 +1,8 @@
 import React from 'react';
-import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid, DatePickerAndroid, Modal, TouchableOpacity } from 'react-native';
 import { MapView } from 'expo';
 import moment from 'moment';
+import "../global.js"
 
 const styles = StyleSheet.create({
   container: {
@@ -41,8 +42,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingTop: 5,
     paddingBottom: 5,
-    paddingLeft: 35,
-    paddingRight: 35
+    paddingLeft: 20,
+    paddingRight: 20
   },
   buttonText: {
     color: "white",
@@ -53,303 +54,6 @@ const styles = StyleSheet.create({
     height: "100%"
   }
 });
-
-var mapStyle = [
-  {
-      "featureType": "all",
-      "elementType": "all",
-      "stylers": [
-          {
-              "color": "#c180a2"
-          }
-      ]
-  },
-  {
-      "featureType": "all",
-      "elementType": "labels",
-      "stylers": [
-          {
-              "visibility": "on"
-          }
-      ]
-  },
-  {
-      "featureType": "all",
-      "elementType": "labels.text.fill",
-      "stylers": [
-          {
-              "saturation": 36
-          },
-          {
-              "color": "#a4a3a3"
-          },
-          {
-              "lightness": 40
-          }
-      ]
-  },
-  {
-      "featureType": "all",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-          {
-              "visibility": "on"
-          },
-          {
-              "color": "#3d2e2e"
-          },
-          {
-              "lightness": 16
-          }
-      ]
-  },
-  {
-      "featureType": "all",
-      "elementType": "labels.icon",
-      "stylers": [
-          {
-              "visibility": "off"
-          }
-      ]
-  },
-  {
-      "featureType": "administrative",
-      "elementType": "geometry.fill",
-      "stylers": [
-          {
-              "color": "#000000"
-          },
-          {
-              "lightness": 20
-          }
-      ]
-  },
-  {
-      "featureType": "administrative",
-      "elementType": "geometry.stroke",
-      "stylers": [
-          {
-              "color": "#000000"
-          },
-          {
-              "lightness": 17
-          },
-          {
-              "weight": 1.2
-          }
-      ]
-  },
-  {
-      "featureType": "administrative.country",
-      "elementType": "labels.text.fill",
-      "stylers": [
-          {
-              "color": "#e2dfdf"
-          }
-      ]
-  },
-  {
-      "featureType": "administrative.locality",
-      "elementType": "labels.text.fill",
-      "stylers": [
-          {
-              "color": "#ffffff"
-          }
-      ]
-  },
-  {
-      "featureType": "administrative.neighborhood",
-      "elementType": "labels.text.fill",
-      "stylers": [
-          {
-              "color": "#d1d0d1"
-          }
-      ]
-  },
-  {
-      "featureType": "administrative.neighborhood",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-          {
-              "visibility": "on"
-          },
-          {
-              "hue": "#ff0000"
-          }
-      ]
-  },
-  {
-      "featureType": "landscape",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#000000"
-          },
-          {
-              "lightness": 20
-          }
-      ]
-  },
-  {
-      "featureType": "poi",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#000000"
-          },
-          {
-              "lightness": 21
-          },
-          {
-              "visibility": "on"
-          }
-      ]
-  },
-  {
-      "featureType": "poi.business",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "visibility": "on"
-          }
-      ]
-  },
-  {
-      "featureType": "road.highway",
-      "elementType": "geometry.fill",
-      "stylers": [
-          {
-              "color": "#e605c1"
-          },
-          {
-              "saturation": "-17"
-          },
-          {
-              "lightness": "-10"
-          }
-      ]
-  },
-  {
-      "featureType": "road.highway",
-      "elementType": "geometry.stroke",
-      "stylers": [
-          {
-              "visibility": "off"
-          }
-      ]
-  },
-  {
-      "featureType": "road.highway",
-      "elementType": "labels.text",
-      "stylers": [
-          {
-              "color": "#ffffff"
-          }
-      ]
-  },
-  {
-      "featureType": "road.highway",
-      "elementType": "labels.text.fill",
-      "stylers": [
-          {
-              "color": "#dcdcdc"
-          }
-      ]
-  },
-  {
-      "featureType": "road.highway",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-          {
-              "color": "#565256"
-          }
-      ]
-  },
-  {
-      "featureType": "road.arterial",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#000000"
-          },
-          {
-              "lightness": 18
-          }
-      ]
-  },
-  {
-      "featureType": "road.arterial",
-      "elementType": "geometry.fill",
-      "stylers": [
-          {
-              "color": "#ac1b6a"
-          }
-      ]
-  },
-  {
-      "featureType": "road.arterial",
-      "elementType": "labels.text.fill",
-      "stylers": [
-          {
-              "color": "#d8d8d8"
-          }
-      ]
-  },
-  {
-      "featureType": "road.arterial",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-          {
-              "color": "#696969"
-          }
-      ]
-  },
-  {
-      "featureType": "road.local",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#64646c"
-          },
-          {
-              "lightness": 16
-          }
-      ]
-  },
-  {
-      "featureType": "road.local",
-      "elementType": "labels.text.fill",
-      "stylers": [
-          {
-              "color": "#d8d8d8"
-          }
-      ]
-  },
-  {
-      "featureType": "transit",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#000000"
-          },
-          {
-              "lightness": 19
-          }
-      ]
-  },
-  {
-      "featureType": "water",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#252525"
-          },
-          {
-              "lightness": 17
-          }
-      ]
-  }
-]
 
 let region = {
   latitude: 40.7128,
@@ -375,15 +79,18 @@ class SearchScreen extends React.Component {
       timeHour: 12,
       timeMinute: 0,
       startText: "Enter Pickup Location",
-      timeString: "Choose Departure Time", //moment().format("h:mm A"),
+      timeString: moment().format("h:mm A"),
+      dateString: moment().format("MM/DD/YY"),
+      radius: 500,
       isLoading: true,
       markers: [],
-      loadedURL: null
+      loadedURL: null,
+      visibleModal: false
     };
   }
 
   _onPressGo = () => {
-    if (!((global.startCoords === null) || (global.timeHour === null))) {
+    if (!((global.startCoords === null) || (this.state.timeString === null))) {
       this.setState({ 
         displayMarkers: true
       })
@@ -403,7 +110,7 @@ class SearchScreen extends React.Component {
         {cancelable: false},
       );
     }
-    else if (global.timeHour === null) {
+    else if (this.state.timeString === null) {
       Alert.alert(
         'Wait a minute...',
         'We don\'t know when you want to leave.',
@@ -437,6 +144,31 @@ class SearchScreen extends React.Component {
       // + ((hour > 12) ? " pm" : " am")
     }
     console.log("end of _onPressTime");
+  }
+
+  _onPressDate = async () => {
+    const {action, year, month, day} = await DatePickerAndroid.open({
+      date: new Date(),
+      minDate: new Date(),
+      mode: 'calendar'
+    });
+    if (action !== DatePickerAndroid.dismissedAction) {
+      this.setState({
+        dateString: moment().year(year).month(month).day(day).format("MM/DD/YY")
+      })
+    }
+    console.log("end of _onPressDate");
+  }
+
+  updateRadius = () => {
+    let newRadius = this.state.radius;
+    if (this.state.radius > 900) 
+      newRadius = 100;
+    else
+      newRadius = this.state.radius + 100;
+    this.setState({ 
+      radius: newRadius
+    })
   }
 
   _onStartFocus = () => {
@@ -518,36 +250,22 @@ class SearchScreen extends React.Component {
             <View style={styles.filterContainer}>
               <TouchableOpacity
                 style={styles.buttonStyle}
-                onPress={this._onPressTime}
+                onPress={this._onPressDate}
               >
-                <Text style={styles.buttonText}> Date </Text>
+                <Text style={styles.buttonText}> {this.state.dateString} </Text>
               </TouchableOpacity> 
               <TouchableOpacity
                 style={styles.buttonStyle}
                 onPress={this._onPressTime}
               >
-                <Text style={styles.buttonText}> Time </Text>
+                <Text style={styles.buttonText}> {this.state.timeString} </Text>
               </TouchableOpacity> 
               <TouchableOpacity
                 style={styles.buttonStyle}
-                onPress={this._onPressTime}
+                onPress={this.updateRadius}
               >
-                <Text style={styles.buttonText}> Radius </Text>
+                <Text style={styles.buttonText}> Within {this.state.radius} meters </Text>
               </TouchableOpacity> 
-                {/* onPress={this._onPressTime}
-                title={this.state.timeString}
-                color="black"
-              /> */}
-              {/* <Button 
-                onPress={this._onPressTime}
-                title={"Time"}
-                color="black"
-              />
-              <Button 
-                onPress={this._onPressTime}
-                title={"Radius"}
-                color="black"
-              /> */}
             </View>
           </View>
         </View>
@@ -557,11 +275,25 @@ class SearchScreen extends React.Component {
             color="#FF1493"
             accessibilityLabel="Start your search"
           />
+          {/* <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.visibleModal}
+          // onRequestClose={() => {
+          //   this.visibleModal(false)
+          // }}
+          >
+            <TextInput></TextInput>
+            <Button 
+              title="Update"
+              onPress={this.visibleModal(false)}
+            />
+          </Modal> */}
           <MapView
           style={styles.mapFlex}
           provder="google"
           initialRegion={region}
-          customMapStyle={mapStyle}
+          customMapStyle={global.mapStyle}
         >
           {this.renderMarkers()}
         </MapView>
