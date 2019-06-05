@@ -19,7 +19,7 @@ Y_CELL_SIZE = MAX_Y_DIST / Y_NUM_CELLS # in km
 
 
 CLF_NAME = 'randf_trained.joblib'
-MODEL_DIR = '../../..'
+MODEL_DIR = '../'
 clf = None
 
 
@@ -38,7 +38,7 @@ def loc_to_cluster(lat, lon):
 
 def get_adj_clusters(lat, lon, radius, cursor):
     query= """select clusterx, clustery from ride 
-    where ST_DWithin(geom, ST_MakePoint(%(lon)s, %(lat)s)::geography, %(radius)s)
+    where ST_DWithin(geog::geometry, ST_MakePoint(%(lon)s, %(lat)s)::geography, %(radius)s)
     group by clusterx, clustery"""
 
     cursor.execute(query, {'lat' : lat, 'lon' : lon, 'radius' : radius})
@@ -46,7 +46,7 @@ def get_adj_clusters(lat, lon, radius, cursor):
     return rows
 
 def get_random_point(clusterx, clustery, cursor):
-    query="""select lat, lon from ride
+    query="""select ST_Y(geog::geometry) as lat, ST_X(geog::geometry) as lon from ride
     where clusterx=%(clusterx)s and clustery = %(clustery)s
     limit 1"""
     cursor.execute(query, {'clusterx' : clusterx, 'clustery' : clustery})
@@ -58,6 +58,7 @@ def get_chunk_idx(hour, minute):
 
 def get_row_with_pred(row, clf, day, month, chunkIdx, cursor):
     point = get_random_point(row[0], row[1], cursor)
+    print(row[0], row[1])
     return {'lat' : point[0],
             'lon' : point[1],
             'nrides' : clf.predict([[row[0], row[1], day, month, chunkIdx]]).tolist()[0]}
