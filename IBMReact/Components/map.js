@@ -313,8 +313,8 @@ let region = {
   longitudeDelta: 0.0421,
 };
 
-var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
-var staticServerURL = "http://ourserver.com/";
+// var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
+var staticServerURL = "http://192.168.0.8:5000/predict";
 
 function addParameterToURL(_url, param){
   _url += (_url.split('?')[1] ? '&':'?') + param;
@@ -325,59 +325,66 @@ class Map extends React.Component {
   
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {  
       isLoading: true,
       markers: [],
       loadedURL: null
     };
   }
 
-  renderMarkers() {
+  renderMarkers() { 
     if ( !this.props.displayMarkers ) return null;
     this.fetchData();
+    console.log(this.state.markers)
     return this.state.isLoading
       ? null
       : this.state.markers.map((marker, index) => {
           const coords = {
-            latitude: marker.latitude,
-            longitude: marker.longitude,
+            latitude: marker.lat,
+            longitude: marker.lon,
           };
 
           const metadata = `Status: ${marker.statusValue}`;
-          // const pinColor = '#000000';
 
+          console.log(coords)
           return (
             <MapView.Marker
               key={index} 
               coordinate={coords}
-              title={marker.stationName}
-              description={metadata}
+            //   title={marker.stationName}
+            //   description={metadata}
               pinColor={'teal'}
             />
           );
         });
   }
 
-  // componentDidMount() {
-  //   this.fetchData();
-  // }
-  
 
   fetchData() {
     var requestURL = staticServerURL;
+    requestURL = addParameterToURL(requestURL, 'lat=' + String(global.startCoords.lat));
+    requestURL = addParameterToURL(requestURL, 'lon=' + String(global.startCoords.lng));
+    // requestURL = addParameterToURL(requestURL, 'lat=40.749021');
+    // requestURL = addParameterToURL(requestURL, 'lon=-73.912705');
+    requestURL = addParameterToURL(requestURL, 'radius=1000');
+    requestURL = addParameterToURL(requestURL, 'day=4');
+    requestURL = addParameterToURL(requestURL, 'month=6');
     requestURL = addParameterToURL(requestURL, 'hour=' + String(global.timeHour));
     requestURL = addParameterToURL(requestURL, 'minute=' + String(global.timeMinute));
-    requestURL = addParameterToURL(requestURL, 'lat=' + String(global.startCoords.lat));
-    requestURL = addParameterToURL(requestURL, 'lng=' + String(global.startCoords.lng)); 
+    // requestURL = addParameterToURL(requestURL, 'hour=10');
+    // requestURL = addParameterToURL(requestURL, 'minute=30');
+    requestURL = addParameterToURL(requestURL, 'nrows=20');
+
     console.log(requestURL);
     if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
+    console.log("fetching")
 
-    fetch(serverURL)
-      .then((response) => response.json()) 
+    fetch(requestURL, {method: 'GET'})
+      .then((response) => response.json())
       .then((responseJson) => { 
         this.setState({ 
           isLoading: false,
-          markers: responseJson.stationBeanList, 
+          markers: responseJson, 
           loadedURL: requestURL
         });
       })
@@ -386,8 +393,7 @@ class Map extends React.Component {
       });
   }
 
-  render() {
-  
+  render() { 
     return (
         <MapView
           style={styles.mapFlex}

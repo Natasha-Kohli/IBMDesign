@@ -1,4 +1,4 @@
-startLocation = "Enter Pickup Location";
+startLocation = "Enter Pickup Location...";
 briefLocation = "Enter Pickup Location";
 startCoords = null;
 timeString = "Enter Departure Time";
