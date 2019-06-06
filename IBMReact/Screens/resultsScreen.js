@@ -26,17 +26,7 @@ class ResultsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      data: [
-        {
-          name: 'Leave Now',
-          avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-          subtitle: 'It\'s quicker'
-        },
-        {
-          name: 'Leave Then',
-          avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-          subtitle: 'It\'s better'
-        }]
+      data: []
     };
   }
 
@@ -91,7 +81,6 @@ class ResultsScreen extends React.Component {
         keyExtractor={this.keyExtractor}
         data={this.state.data}
         renderItem={this.renderItem}
-        // ListHeaderComponent={this.renderHeader}
         ItemSeparatorComponent={this.renderSeparator}
         ListFooterComponent={this.renderFooter}
       />

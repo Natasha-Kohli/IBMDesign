@@ -64,6 +64,7 @@ let region = {
 
 // var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
 var staticServerURL = "http://192.168.0.8:5000/predict";
+var testServerURL = "http://192.168.0.8:5000/predict?lat=40.6447&lon=-73.7824&radius=1000&nrows=10&day_week=0&day_month=4&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
 
 function addParameterToURL(_url, param){
   _url += (_url.split('?')[1] ? '&':'?') + param;
@@ -85,7 +86,9 @@ class SearchScreen extends React.Component {
       isLoading: true,
       markers: [],
       loadedURL: null,
-      visibleModal: false
+      visibleModal: false,
+      serverResponse: null,
+      startMarker: null
     };
   }
 
@@ -137,11 +140,6 @@ class SearchScreen extends React.Component {
         timeMinute: minute,
         timeString: moment().hour(hour).minute(minute).format("h:mm A")
       })
-      // global.timeHour = hour,
-      // global.timeMinute = minute,
-      // global.timeString = "Leaving at " + String(hour % 12) + ":" 
-      // + ((minute < 10) ? "0" + String(minute) : String(minute)) 
-      // + ((hour > 12) ? " pm" : " am")
     }
     console.log("end of _onPressTime");
   }
@@ -179,7 +177,7 @@ class SearchScreen extends React.Component {
   renderMarkers() { 
     if ( !this.state.displayMarkers ) return null;
     this.fetchData();
-    console.log(this.state.markers)
+
     return this.state.isLoading
       ? null
       : this.state.markers.map((marker, index) => {
@@ -188,15 +186,15 @@ class SearchScreen extends React.Component {
             longitude: marker.lon,
           };
 
-          const metadata = `Status: ${marker.statusValue}`;
+          console.log("marker: " + String(marker))
 
           console.log(coords)
           return (
             <MapView.Marker
               key={index} 
               coordinate={coords}
-            //   title={marker.stationName}
-            //   description={metadata}
+              title={String(marker.name)}
+              description={"Score: " + String(marker.rating)}
               pinColor={'teal'}
             />
           );
@@ -207,16 +205,15 @@ class SearchScreen extends React.Component {
     var requestURL = staticServerURL;
     requestURL = addParameterToURL(requestURL, 'lat=' + String(global.startCoords.lat));
     requestURL = addParameterToURL(requestURL, 'lon=' + String(global.startCoords.lng));
-    // requestURL = addParameterToURL(requestURL, 'lat=40.749021');
-    // requestURL = addParameterToURL(requestURL, 'lon=-73.912705');
     requestURL = addParameterToURL(requestURL, 'radius=1000');
     requestURL = addParameterToURL(requestURL, 'day=4');
     requestURL = addParameterToURL(requestURL, 'month=6');
     requestURL = addParameterToURL(requestURL, 'hour=' + String(global.timeHour));
     requestURL = addParameterToURL(requestURL, 'minute=' + String(global.timeMinute));
-    // requestURL = addParameterToURL(requestURL, 'hour=10');
-    // requestURL = addParameterToURL(requestURL, 'minute=30');
     requestURL = addParameterToURL(requestURL, 'nrows=20');
+
+    //for testing 
+    requestURL = testServerURL;
 
     console.log(requestURL);
     if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
@@ -227,10 +224,15 @@ class SearchScreen extends React.Component {
       .then((responseJson) => { 
         this.setState({ 
           isLoading: false,
-          markers: responseJson, 
+          serverResponse: responseJson, 
+          markers: responseJson.suggestions, 
+          startMarker: responseJson.start,
           loadedURL: requestURL
         });
-      })
+        console.log("response " + JSON.stringify(responseJson));
+        console.log("the suggestions " + JSON.stringify(responseJson.suggestions))
+        return responseJson;
+      }) 
       .catch((error) => {
         console.log(error);
       });
