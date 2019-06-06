@@ -61,7 +61,7 @@ const lonDelt = 0.0421;
 
 // var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
 var staticServerURL = "http://192.168.0.8:5000/predict";
-var testServerURL = "http://http://63a83028.ngrok.io/predict?lat=40.6447&lon=-73.7824&radius=100&nrows=10&day_week=5&day_month=25&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
+var testServerURL = "http://63a83028.ngrok.io/predict?lat=40.6447&lon=-73.7824&radius=100&nrows=10&day_week=5&day_month=25&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
 
 function addParameterToURL(_url, param){
   _url += (_url.split('?')[1] ? '&':'?') + param;
@@ -100,14 +100,6 @@ class SearchScreen extends React.Component {
   _onPressGo = async () => {
     if (!((global.startCoords === null) || (this.state.timeString === null))) {
       var myVar = await this.fetchData();
-      console.log("myVar" + JSON.stringify(myVar));
-      this.setState({ 
-        displayMarkers: true
-      })
-      const {navigate} = this.props.navigation;
-      navigate('Results', {
-        serverResponse: myVar
-      })
     } else if (global.startCoords === null) {
       Alert.alert(
         'Wait a minute...',
@@ -242,8 +234,12 @@ class SearchScreen extends React.Component {
           loadedURL: requestURL
         });
         global.data = responseJson.suggestions;
-        console.log("the suggestions " + JSON.stringify(responseJson.suggestions))
-        return responseJson.suggestions;
+        console.log("the suggestions " + JSON.stringify(responseJson.suggestions));
+        this.setState({ 
+          displayMarkers: true
+        })
+        const {navigate} = this.props.navigation;
+        navigate('Results')
       }) 
       .catch((error) => {
         console.log(error);

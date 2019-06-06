@@ -26,7 +26,7 @@ class ResultsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      data: [],
+      data: global.data,
       status: null
     };
   }
@@ -42,7 +42,8 @@ class ResultsScreen extends React.Component {
           backgroundColor: "#CED0CE",
           marginLeft: "14%"
         }}
-      />
+      >
+      </View>
     );
   };
 
@@ -66,14 +67,10 @@ class ResultsScreen extends React.Component {
     <ListItem
       title={item.name}
       subtitle={item.subtitle}
-      leftAvatar={{ source: { uri: item.avatar_url } }}
     /> 
   )
 
   render () {
-    const { navigation } = this.props;
-    const serverResponse = navigation.getParam('serverResponse');
-    console.log("server response in results " + JSON.stringify(serverResponse));
      
     return (
       <View style={styles.container}>
