@@ -96,11 +96,20 @@ def get_place_name(lat, lon, cache):
     
     if place_str is None:
         gmap = get_gmaps_client()
-        res = gmap.reverse_geocode((lat, lon), result_type='premise|street_address|point_of_interest')
+        res = gmap.reverse_geocode((lat, lon), result_type='street_address')
         place_str = "Unknown"
         
-        if len(res) > 0 and 'formatted_address' in res[0]:
-            place_str = res[0]['formatted_address']
+        for r in res:
+            if 'formatted_address' in r:
+                place_str = r['formatted_address']
+                break
+            else:
+                print(r)
+
+        if place_str == "Unknown":
+            res = gmap.reverse_geocode((lat, lon))
+            if len(res) > 0 and 'formatted_address' in res[0]:
+                place_str = res[0]['formatted_address']
 
         cache.put(lat, lon, place_str)
 
