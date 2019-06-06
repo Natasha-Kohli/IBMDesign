@@ -85,6 +85,12 @@ class SearchScreen extends React.Component {
       startMarker: null,
       dateMonth: moment().month(),
       dateDay: moment().day(),
+      region: {
+        latitude: 40.7128,
+        longitude: -74.0060,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
     };
   }
 
@@ -208,7 +214,7 @@ class SearchScreen extends React.Component {
     requestURL = addParameterToURL(requestURL, 'nrows=6');
 
     //for testing 
-    requestURL = testServerURL;
+    // requestURL = testServerURL;
 
     console.log(requestURL);
     //if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
@@ -276,10 +282,11 @@ class SearchScreen extends React.Component {
             color="#FF1493"
             accessibilityLabel="Start your search"
           />
+          {console.log(global.region)}
           <MapView
           style={styles.mapFlex}
           provder="google"
-          initialRegion={global.region}
+          initialRegion={this.state.region}
           customMapStyle={global.mapStyle}
         >
           {this.renderMarkers()}

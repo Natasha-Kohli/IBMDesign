@@ -46,8 +46,8 @@ class GoogleLocationsScreen extends React.Component {
             global.region = {
               latitude: details.geometry.location.latitude,
               longitude: details.geometry.location.longitude,
-              latitudeDelta: latDelt,
-              longitudeDelta: lonDelt,
+              latitudeDelta: global.latDelt,
+              longitudeDelta: global.lonDelt,
             };
             navigate('Search', { location: this.state.displayLocation });
             }

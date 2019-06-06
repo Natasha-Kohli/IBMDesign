@@ -1,8 +1,8 @@
 startLocation = "Enter Pickup Location...";
 briefLocation = "Enter Pickup Location";
-// startCoords = null;
+startCoords = null;
 //testing
-startCoords = "non null";
+// startCoords = "non null";
 timeString = "Enter Departure Time";
 timeHour = null;
 timeMinute = null;
