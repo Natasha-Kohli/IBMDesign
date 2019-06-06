@@ -171,7 +171,4 @@ def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_s
         if connection:
             cursor.close()
             connection.close()
-
-connection = psycopg2.connect(user='amit',host='127.0.0.1',port='5432',database='uber')
-cursor = connection.cursor()
         
