@@ -55,16 +55,13 @@ const styles = StyleSheet.create({
   }
 });
 
-let region = {
-  latitude: 40.7128,
-  longitude: -74.0060,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421,
-};
+
+const latDelt = 0.0922;
+const lonDelt = 0.0421;
 
 // var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
 var staticServerURL = "http://192.168.0.8:5000/predict";
-var testServerURL = "http://192.168.0.8:5000/predict?lat=40.6447&lon=-73.7824&radius=1000&nrows=10&day_week=0&day_month=4&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
+var testServerURL = "http://http://63a83028.ngrok.io/predict?lat=40.6447&lon=-73.7824&radius=100&nrows=10&day_week=5&day_month=25&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
 
 function addParameterToURL(_url, param){
   _url += (_url.split('?')[1] ? '&':'?') + param;
@@ -88,17 +85,29 @@ class SearchScreen extends React.Component {
       loadedURL: null,
       visibleModal: false,
       serverResponse: null,
-      startMarker: null
+      startMarker: null,
+      region: {
+        latitude: 40.7128,
+        longitude: -74.0060,
+        latitudeDelta: latDelt,
+        longitudeDelta: lonDelt,
+      },
+      dateMonth: null,
+      dateDay: null
     };
   }
 
-  _onPressGo = () => {
+  _onPressGo = async () => {
     if (!((global.startCoords === null) || (this.state.timeString === null))) {
+      var myVar = await this.fetchData();
+      console.log("myVar" + JSON.stringify(myVar));
       this.setState({ 
         displayMarkers: true
       })
       const {navigate} = this.props.navigation;
-      navigate('Results')
+      navigate('Results', {
+        serverResponse: myVar
+      })
     } else if (global.startCoords === null) {
       Alert.alert(
         'Wait a minute...',
@@ -152,7 +161,9 @@ class SearchScreen extends React.Component {
     });
     if (action !== DatePickerAndroid.dismissedAction) {
       this.setState({
-        dateString: moment().year(year).month(month).day(day).format("MM/DD/YY")
+        dateString: moment().year(year).month(month).day(day).format("MM/DD/YY"),
+        dateMonth: month,
+        dateDay: day
       })
     }
     console.log("end of _onPressDate");
@@ -176,7 +187,6 @@ class SearchScreen extends React.Component {
 
   renderMarkers() { 
     if ( !this.state.displayMarkers ) return null;
-    this.fetchData();
 
     return this.state.isLoading
       ? null
@@ -205,12 +215,14 @@ class SearchScreen extends React.Component {
     var requestURL = staticServerURL;
     requestURL = addParameterToURL(requestURL, 'lat=' + String(global.startCoords.lat));
     requestURL = addParameterToURL(requestURL, 'lon=' + String(global.startCoords.lng));
-    requestURL = addParameterToURL(requestURL, 'radius=1000');
-    requestURL = addParameterToURL(requestURL, 'day=4');
-    requestURL = addParameterToURL(requestURL, 'month=6');
-    requestURL = addParameterToURL(requestURL, 'hour=' + String(global.timeHour));
-    requestURL = addParameterToURL(requestURL, 'minute=' + String(global.timeMinute));
-    requestURL = addParameterToURL(requestURL, 'nrows=20');
+    requestURL = addParameterToURL(requestURL, 'radius=' + String(this.state.radius));
+    requestURL = addParameterToURL(requestURL, 'day_month=' + String(this.state.day));
+    requestURL = addParameterToURL(requestURL, 'day_week=0');
+    requestURL = addParameterToURL(requestURL, 'hour_start=' + String(this.state.timeHour));
+    requestURL = addParameterToURL(requestURL, 'minute_start=' + String(this.state.timeMinute));
+    requestURL = addParameterToURL(requestURL, 'hour_start=' + String(this.state.timeHour+1));
+    requestURL = addParameterToURL(requestURL, 'minute_start=' + String(this.state.timeMinute));
+    requestURL = addParameterToURL(requestURL, 'nrows=6');
 
     //for testing 
     requestURL = testServerURL;
@@ -229,9 +241,9 @@ class SearchScreen extends React.Component {
           startMarker: responseJson.start,
           loadedURL: requestURL
         });
-        console.log("response " + JSON.stringify(responseJson));
+        global.data = responseJson.suggestions;
         console.log("the suggestions " + JSON.stringify(responseJson.suggestions))
-        return responseJson;
+        return responseJson.suggestions;
       }) 
       .catch((error) => {
         console.log(error);
@@ -280,7 +292,7 @@ class SearchScreen extends React.Component {
           <MapView
           style={styles.mapFlex}
           provder="google"
-          initialRegion={region}
+          initialRegion={this.state.region}
           customMapStyle={global.mapStyle}
         >
           {this.renderMarkers()}

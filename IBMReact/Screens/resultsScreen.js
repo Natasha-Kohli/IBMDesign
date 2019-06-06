@@ -26,15 +26,12 @@ class ResultsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      data: []
+      data: [],
+      status: null
     };
   }
 
   keyExtractor = (item, index) => index.toString()
-
-  // renderHeader = () => {
-  //   return <TextInput placeholder="Type Here..." />;
-  // };
 
   renderSeparator = () => {
     return (
@@ -70,10 +67,14 @@ class ResultsScreen extends React.Component {
       title={item.name}
       subtitle={item.subtitle}
       leftAvatar={{ source: { uri: item.avatar_url } }}
-    />
+    /> 
   )
 
   render () {
+    const { navigation } = this.props;
+    const serverResponse = navigation.getParam('serverResponse');
+    console.log("server response in results " + JSON.stringify(serverResponse));
+     
     return (
       <View style={styles.container}>
         <View style={styles.notificationBar}></View>
