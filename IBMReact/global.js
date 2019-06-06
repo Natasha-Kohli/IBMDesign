@@ -2,7 +2,7 @@ startLocation = "Enter Pickup Location...";
 briefLocation = "Enter Pickup Location";
 // startCoords = null;
 //testing
-startCoords = "non-null dummy value";
+startCoords = null;
 timeString = "Enter Departure Time";
 timeHour = null;
 timeMinute = null;

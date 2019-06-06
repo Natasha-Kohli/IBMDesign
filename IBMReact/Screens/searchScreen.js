@@ -59,8 +59,7 @@ const styles = StyleSheet.create({
 const latDelt = 0.0922;
 const lonDelt = 0.0421;
 
-// var serverURL = 'https://feeds.citibikenyc.com/stations/stations.json'
-var staticServerURL = "http://192.168.0.8:5000/predict";
+var staticServerURL = "http://63a83028.ngrok.io/predict";
 var testServerURL = "http://63a83028.ngrok.io/predict?lat=40.6447&lon=-73.7824&radius=100&nrows=10&day_week=5&day_month=25&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
 
 function addParameterToURL(_url, param){
@@ -92,8 +91,8 @@ class SearchScreen extends React.Component {
         latitudeDelta: latDelt,
         longitudeDelta: lonDelt,
       },
-      dateMonth: null,
-      dateDay: null
+      dateMonth: moment().month(),
+      dateDay: moment().day(),
     };
   }
 
@@ -141,7 +140,7 @@ class SearchScreen extends React.Component {
         timeMinute: minute,
         timeString: moment().hour(hour).minute(minute).format("h:mm A")
       })
-    }
+    } 
     console.log("end of _onPressTime");
   }
 
@@ -208,19 +207,19 @@ class SearchScreen extends React.Component {
     requestURL = addParameterToURL(requestURL, 'lat=' + String(global.startCoords.lat));
     requestURL = addParameterToURL(requestURL, 'lon=' + String(global.startCoords.lng));
     requestURL = addParameterToURL(requestURL, 'radius=' + String(this.state.radius));
-    requestURL = addParameterToURL(requestURL, 'day_month=' + String(this.state.day));
+    requestURL = addParameterToURL(requestURL, 'day_month=' + String(this.state.dateDay));
     requestURL = addParameterToURL(requestURL, 'day_week=0');
     requestURL = addParameterToURL(requestURL, 'hour_start=' + String(this.state.timeHour));
     requestURL = addParameterToURL(requestURL, 'minute_start=' + String(this.state.timeMinute));
-    requestURL = addParameterToURL(requestURL, 'hour_start=' + String(this.state.timeHour+1));
-    requestURL = addParameterToURL(requestURL, 'minute_start=' + String(this.state.timeMinute));
+    requestURL = addParameterToURL(requestURL, 'hour_end=' + String(this.state.timeHour+1));
+    requestURL = addParameterToURL(requestURL, 'minute_end=' + String(this.state.timeMinute));
     requestURL = addParameterToURL(requestURL, 'nrows=6');
 
     //for testing 
-    requestURL = testServerURL;
+    // requestURL = testServerURL;
 
     console.log(requestURL);
-    if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
+    //if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
     console.log("fetching")
 
     fetch(requestURL, {method: 'GET'})

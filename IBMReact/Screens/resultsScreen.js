@@ -66,7 +66,7 @@ class ResultsScreen extends React.Component {
   renderItem = ({ item }) => (
     <ListItem
       title={item.name}
-      subtitle={item.subtitle}
+      subtitle={String(item.rating) + "\% fewer departures. " }
     /> 
   )
 
