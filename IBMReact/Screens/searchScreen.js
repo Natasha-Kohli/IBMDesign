@@ -56,8 +56,6 @@ const styles = StyleSheet.create({
 });
 
 
-const latDelt = 0.0922;
-const lonDelt = 0.0421;
 
 var staticServerURL = "http://63a83028.ngrok.io/predict";
 var testServerURL = "http://63a83028.ngrok.io/predict?lat=40.6447&lon=-73.7824&radius=100&nrows=10&day_week=5&day_month=25&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
@@ -85,12 +83,6 @@ class SearchScreen extends React.Component {
       visibleModal: false,
       serverResponse: null,
       startMarker: null,
-      region: {
-        latitude: 40.7128,
-        longitude: -74.0060,
-        latitudeDelta: latDelt,
-        longitudeDelta: lonDelt,
-      },
       dateMonth: moment().month(),
       dateDay: moment().day(),
     };
@@ -216,7 +208,7 @@ class SearchScreen extends React.Component {
     requestURL = addParameterToURL(requestURL, 'nrows=6');
 
     //for testing 
-    // requestURL = testServerURL;
+    requestURL = testServerURL;
 
     console.log(requestURL);
     //if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
@@ -287,7 +279,7 @@ class SearchScreen extends React.Component {
           <MapView
           style={styles.mapFlex}
           provder="google"
-          initialRegion={this.state.region}
+          initialRegion={global.region}
           customMapStyle={global.mapStyle}
         >
           {this.renderMarkers()}

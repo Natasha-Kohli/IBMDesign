@@ -2,12 +2,22 @@ startLocation = "Enter Pickup Location...";
 briefLocation = "Enter Pickup Location";
 // startCoords = null;
 //testing
-startCoords = null;
+startCoords = "non null";
 timeString = "Enter Departure Time";
 timeHour = null;
 timeMinute = null;
 data = null;
 
+
+const latDelt = 0.0922;
+const lonDelt = 0.0421;
+
+region = {
+    latitude: 40.7128,
+    longitude: -74.0060,
+    latitudeDelta: latDelt,
+    longitudeDelta: lonDelt,
+  };
 
 mapStyle = [
   {

@@ -19,7 +19,14 @@ const styles = StyleSheet.create({
 class ResultsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "Departing From: " + global.briefLocation
+      title: "From: " + global.briefLocation,
+      headerStyle: {
+        backgroundColor: '#000000',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      }
     };
   };
 
@@ -65,8 +72,15 @@ class ResultsScreen extends React.Component {
 
   renderItem = ({ item }) => (
     <ListItem
+      titleStyle={{ color: 'white', fontWeight: 'bold' }}
+      subtitleStyle={{ color: 'white' }}
       title={item.name}
       subtitle={String(item.rating) + "\% fewer departures. " }
+      linearGradientProps={{
+        colors: ['#AE0B6E', '#e00f78'],
+        start: [1, 0],
+        end: [0.2, 0],
+      }}
     /> 
   )
 

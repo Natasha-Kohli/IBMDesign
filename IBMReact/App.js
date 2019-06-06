@@ -20,7 +20,7 @@ const MainNavigator = createStackNavigator({
     navigationOptions: {
       header: null,
     }},
-});
+}); 
 
 const App = createAppContainer(MainNavigator);
 
