@@ -30,13 +30,16 @@ def predict():
     lat, lon = float(request.args['lat']), float(request.args['lon'])
     radius = int(request.args['radius'])
     nrows = int(request.args['nrows'])
-    day = int(request.args['day'])
-    month = int(request.args['month'])
-    hour = int(request.args['hour'])
-    minute = int(request.args['minute'])
+    day_week = int(request.args['day_week'])
+    day_month = int(request.args['day_month'])
+    hour_start = int(request.args['hour_start'])
+    minute_start = int(request.args['minute_start'])
+    hour_end = int(request.args['hour_end'])    
+    minute_end = int(request.args['minute_end'])
 
 
-    recommendations = recommend.recommend(lat, lon, radius, nrows, day, month, hour, minute)    
+    recommendations = recommend.recommend(lat, lon, radius, nrows, day_week, day_month, hour_start,
+                                          minute_start, hour_end, minute_end)
     response_js = json.dumps(recommendations)
 
     resp = Response(response_js, status=200, mimetype='application/json')
