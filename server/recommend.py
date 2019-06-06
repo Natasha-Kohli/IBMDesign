@@ -132,13 +132,14 @@ def get_place_name(lat, lon, cache):
     return place_str
     
 
-def get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, limit, cursor, cache):
+def get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, limit, cursor, cache, reverse):
     global clf
 
     cd_map = {}
     
     clusters = [get_row_with_pred(row, clf, day_week, day_month, cache, cd_map) for row in adj_clusters]
-    clusters.sort(key=(lambda row : row['nrides']))
+    print(reverse)
+    clusters.sort(reverse=reverse, key=(lambda row : row['nrides']))
     if limit > 0:
         clusters = clusters[:limit]
 
@@ -151,7 +152,7 @@ def get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month,
 
     
 
-def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_start, hour_end, minute_end):
+def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_start, hour_end, minute_end, reverse):
     global clf
     
     try:
@@ -171,7 +172,7 @@ def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_s
 
         start = clf.predict([[startCluster[0], startCluster[1], day_week, day_month, startChunkIdx]]).tolist()[0]
         adj_clusters = get_adj_clusters(lat, lon, radius, startChunkIdx, endChunkIdx, cursor)
-        suggestions = get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, nrows, cursor, cache)
+        suggestions = get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, nrows, cursor, cache, reverse)
         return {'suggestions' : suggestions, 'start' : start}
         
     except (Exception, psycopg2.Error) as error:

@@ -37,9 +37,13 @@ def predict():
     hour_end = int(request.args['hour_end'])    
     minute_end = int(request.args['minute_end'])
 
+    reverse = False
+    if 'reverse' in request.args and request.args['reverse'].strip() == 'true':
+        reverse = True
+
 
     recommendations = recommend.recommend(lat, lon, radius, nrows, day_week, day_month, hour_start,
-                                          minute_start, hour_end, minute_end)
+                                          minute_start, hour_end, minute_end, reverse)
     response_js = json.dumps(recommendations)
 
     resp = Response(response_js, status=200, mimetype='application/json')
