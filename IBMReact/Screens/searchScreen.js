@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid, DatePickerAndroid, Modal, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, View, TextInput, Text, Button, TimePickerAndroid, DatePickerAndroid, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { MapView } from 'expo';
 import moment from 'moment';
 import "../global.js"
@@ -96,6 +96,9 @@ class SearchScreen extends React.Component {
 
   _onPressGo = async () => {
     if (!((global.startCoords === null) || (this.state.timeString === null))) {
+      this.setState({
+        fetching: true
+      })
       var myVar = await this.fetchData();
     } else if (global.startCoords === null) {
       Alert.alert(
@@ -228,12 +231,13 @@ class SearchScreen extends React.Component {
           serverResponse: responseJson, 
           markers: responseJson.suggestions, 
           startMarker: responseJson.start,
-          loadedURL: requestURL
+          loadedURL: requestURL,
         });
         global.data = responseJson.suggestions;
         console.log("the suggestions " + JSON.stringify(responseJson.suggestions));
         this.setState({ 
-          displayMarkers: true
+          displayMarkers: true,
+          fetching: false
         })
         const {navigate} = this.props.navigation;
         navigate('Results')
@@ -276,13 +280,15 @@ class SearchScreen extends React.Component {
             </View>
           </View>
         </View>
-          <Button
+          {this.state.fetching || <Button
             onPress={this._onPressGo}
             title="Go!"
             color="#FF1493"
             accessibilityLabel="Start your search"
-          />
-          {console.log(global.region)}
+          />}
+          <View backgroundColor="#FF1493">
+            {!this.state.fetching || <ActivityIndicator backgroundColor="#FF1493" size="large" color="white" animating={this.state.fetching}/>}
+          </View>
           <MapView
           style={styles.mapFlex}
           provder="google"
