@@ -65,10 +65,19 @@ def get_gmaps_client():
 
 def get_adj_clusters(lat, lon, radius, startChunkIdx, endChunkIdx, cursor):
 
+    #query = """
+    #select
+    #(min(lat) + max(lat)) / 2 as lat, 
+    #(min(lon) + max(lon)) / 2 as lon, 
+    #clusterx, clustery, chunk_idx from ride 
+    #where chunk_idx between %(start_idx)s and %(end_idx)s
+    #and ST_DWithin(geom, ST_MakePoint(%(lon)s, %(lat)s)::geography, %(radius)s) 
+    #group by clusterx, clustery, chunk_idx;"""
+
     query = """
     select
-    (min(lat) + max(lat)) / 2 as lat, 
-    (min(lon) + max(lon)) / 2 as lon, 
+    (array_agg(lat))[1] as lat,
+    (array_agg(lon))[1] as lon,
     clusterx, clustery, chunk_idx from ride 
     where chunk_idx between %(start_idx)s and %(end_idx)s
     and ST_DWithin(geom, ST_MakePoint(%(lon)s, %(lat)s)::geography, %(radius)s) 
@@ -163,3 +172,6 @@ def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_s
             cursor.close()
             connection.close()
 
+connection = psycopg2.connect(user='amit',host='127.0.0.1',port='5432',database='uber')
+cursor = connection.cursor()
+        
