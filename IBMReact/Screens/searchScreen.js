@@ -93,7 +93,7 @@ class SearchScreen extends React.Component {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
-      dow: moment().weekday() - 1,
+      dow: moment().weekday(),
     };
   }
 
@@ -172,7 +172,7 @@ class SearchScreen extends React.Component {
         dateString: moment().year(year).month(month).day(day).format("MM/DD/YY"),
         dateMonth: month,
         dateDay: day,
-        dow: moment().year(year).month(month).day(day).weekday() - 1,
+        dow: moment().year(year).month(month).day(day).weekday(),
       })
     }
     console.log("end of _onPressDate");
