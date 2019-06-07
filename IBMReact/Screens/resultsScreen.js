@@ -113,7 +113,7 @@ class ResultsScreen extends React.Component {
       titleStyle={{ color: 'white', fontWeight: 'bold' }}
       subtitleStyle={{ color: 'white' }}
       title={item.name + ",\nWait " + String(item.minute_offset) + " minutes" }
-      subtitle={String(Math.pow(item.rating, -1)) + "\% fewer departures. " }
+      subtitle={String(Math.pow(item.rating, 1)) + "x fewer departures. " }
       linearGradientProps={{
         colors: ['#AE0B6E', '#e00f78'],
         start: [1, 0],

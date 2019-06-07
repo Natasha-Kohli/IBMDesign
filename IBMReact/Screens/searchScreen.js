@@ -71,8 +71,10 @@ class SearchScreen extends React.Component {
     super(props);
     this.state = { 
       displayMarkers: false,
-      timeHour: 12,
-      timeMinute: 0,
+      timeHour: moment().hour(),
+      timeMinute: moment().minute(),
+      endTimeHour: moment().hour() + 1,
+      endTimeMinute: moment().minute(),
       startText: "Enter Pickup Location",
       timeString: moment().format("h:mm A"),
       dateString: moment().format("MM/DD/YY"),
@@ -90,7 +92,8 @@ class SearchScreen extends React.Component {
         longitude: -74.0060,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
-      }
+      },
+      dow: moment().weekday() - 1,
     };
   }
 
@@ -142,6 +145,19 @@ class SearchScreen extends React.Component {
         timeString: moment().hour(hour).minute(minute).format("h:mm A")
       })
     } 
+    const {action2, hour2, minute2} = await TimePickerAndroid.open({
+      hour2:  new Date().getHours(),
+      minute2: new Date().getMinutes(),
+      is24Hour: false
+    });
+    if (action2 !== TimePickerAndroid.dismissedAction && hour2 >= hour) {
+      global.endTimeHour = hour2;
+      global.endTimeMinute = minute2;
+      this.setState({
+        timeHourEnd: hour,
+        timeMinuteEnd: minute,
+      })
+    } 
     console.log("end of _onPressTime");
   }
 
@@ -149,13 +165,14 @@ class SearchScreen extends React.Component {
     const {action, year, month, day} = await DatePickerAndroid.open({
       date: new Date(),
       minDate: new Date(),
-      mode: 'calendar'
+      mode: 'calendar',
     });
     if (action !== DatePickerAndroid.dismissedAction) {
       this.setState({
         dateString: moment().year(year).month(month).day(day).format("MM/DD/YY"),
         dateMonth: month,
-        dateDay: day
+        dateDay: day,
+        dow: moment().year(year).month(month).day(day).weekday() - 1,
       })
     }
     console.log("end of _onPressDate");
@@ -209,13 +226,13 @@ class SearchScreen extends React.Component {
     requestURL = addParameterToURL(requestURL, 'lon=' + String(global.startCoords.lng));
     requestURL = addParameterToURL(requestURL, 'radius=' + String(this.state.radius));
     requestURL = addParameterToURL(requestURL, 'day_month=' + String(this.state.dateDay));
-    requestURL = addParameterToURL(requestURL, 'day_week=0');
+    requestURL = addParameterToURL(requestURL, 'day_week=' + String(this.state.dow));
     requestURL = addParameterToURL(requestURL, 'hour_start=' + String(this.state.timeHour));
     requestURL = addParameterToURL(requestURL, 'minute_start=' + String(this.state.timeMinute));
     requestURL = addParameterToURL(requestURL, 'hour_end=' + String(this.state.timeHour+1));
     requestURL = addParameterToURL(requestURL, 'minute_end=' + String(this.state.timeMinute));
-    requestURL = addParameterToURL(requestURL, 'nrows=20');
-    requestURL = addParameterToURL(requestURL, 'reverse=True');
+    requestURL = addParameterToURL(requestURL, 'nrows=7');
+    requestURL = addParameterToURL(requestURL, 'reverse=true');
 
     //for testing 
     // requestURL = testServerURL;

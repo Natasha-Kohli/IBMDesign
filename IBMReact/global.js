@@ -7,6 +7,8 @@ timeString = "Enter Departure Time";
 timeHour = null;
 timeMinute = null;
 data = null;
+endTimeHour = null;
+endTimeMinute = null;
 
 
 const latDelt = 0.0922;
