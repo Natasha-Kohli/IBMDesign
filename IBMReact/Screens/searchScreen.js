@@ -78,7 +78,7 @@ class SearchScreen extends React.Component {
       startText: "Enter Pickup Location",
       timeString: moment().format("h:mm A"),
       dateString: moment().format("MM/DD/YY"),
-      radius: 500,
+      radius: 200,
       isLoading: true,
       markers: [],
       loadedURL: null,
