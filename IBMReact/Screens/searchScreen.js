@@ -56,11 +56,9 @@ const styles = StyleSheet.create({
 });
 
 
-const latDelt = 0.0922;
-const lonDelt = 0.0421;
 
-var staticServerURL = "http://63a83028.ngrok.io/predict";
-var testServerURL = "http://63a83028.ngrok.io/predict?lat=40.6447&lon=-73.7824&radius=100&nrows=10&day_week=5&day_month=25&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
+var staticServerURL = "http://1b64ded1.ngrok.io/predict";
+var testServerURL = "http://1b64ded1.ngrok.io/predict?lat=40.6447&lon=-73.7824&radius=100&nrows=10&day_week=5&day_month=25&hour_start=0&minute_start=22&hour_end=16&minute_end=22"
 
 function addParameterToURL(_url, param){
   _url += (_url.split('?')[1] ? '&':'?') + param;
@@ -85,15 +83,14 @@ class SearchScreen extends React.Component {
       visibleModal: false,
       serverResponse: null,
       startMarker: null,
+      dateMonth: moment().month(),
+      dateDay: moment().day(),
       region: {
         latitude: 40.7128,
         longitude: -74.0060,
-        latitudeDelta: latDelt,
-        longitudeDelta: lonDelt,
-      },
-      dateMonth: moment().month(),
-      dateDay: moment().day(),
-      fetching:  false
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
     };
   }
 
@@ -217,7 +214,8 @@ class SearchScreen extends React.Component {
     requestURL = addParameterToURL(requestURL, 'minute_start=' + String(this.state.timeMinute));
     requestURL = addParameterToURL(requestURL, 'hour_end=' + String(this.state.timeHour+1));
     requestURL = addParameterToURL(requestURL, 'minute_end=' + String(this.state.timeMinute));
-    requestURL = addParameterToURL(requestURL, 'nrows=6');
+    requestURL = addParameterToURL(requestURL, 'nrows=20');
+    requestURL = addParameterToURL(requestURL, 'reverse=True');
 
     //for testing 
     // requestURL = testServerURL;

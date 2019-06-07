@@ -85,16 +85,23 @@ def get_adj_clusters(lat, lon, radius, startChunkIdx, endChunkIdx, cursor):
     
     cursor.execute(query, {'lat' : lat, 'lon' : lon, 'radius' : radius, 'start_idx' : startChunkIdx, 'end_idx' : endChunkIdx})
     rows = cursor.fetchall()
+    
     return rows
 
 def get_chunk_idx(hour, minute):
     return 4 * hour + minute // 15
 
-def get_row_with_pred(row, clf, day_week, day_month, cache):
-    place_str = cache.get(row[0], row[1])
+def get_row_with_pred(row, clf, day_week, day_month, cache, cd_map):
+
+    lat, lon = row[0], row[1]
+    if (row[2], row[3]) not in cd_map:
+        cd_map[(row[2], row[3])] = (lat, lon)
+    else:
+        r = cd_map[(row[2], row[3])]
+        lat, lon = r[0], r[1]
         
-    return {'lat' : row[0],
-            'lon' : row[1],
+    return {'lat' : lat,
+            'lon' : lon,
             'nrides' : clf.predict([[row[2], row[3], day_week, day_month, row[4]]]).tolist()[0],
             'minute_offset' : row[4],
             'name' : None}
@@ -125,14 +132,18 @@ def get_place_name(lat, lon, cache):
     return place_str
     
 
-def get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, limit, cursor, cache):
-    global clf    
-    clusters = [get_row_with_pred(row, clf, day_week, day_month, cache) for row in adj_clusters]
-    clusters.sort(key=(lambda row : row['nrides']))
+def get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, limit, cursor, cache, reverse):
+    global clf
+
+    cd_map = {}
+    
+    clusters = [get_row_with_pred(row, clf, day_week, day_month, cache, cd_map) for row in adj_clusters]
+    print(reverse)
+    clusters.sort(reverse=reverse, key=(lambda row : row['nrides']))
     if limit > 0:
         clusters = clusters[:limit]
 
-    for cluster in clusters:
+    for cluster in clusters:            
         cluster['name'] = get_place_name(cluster['lat'], cluster['lon'], cache)
         cluster['minute_offset'] = (cluster['minute_offset'] - startChunkIdx) * 15
         cluster['rating'] = cluster['nrides'] / start
@@ -141,7 +152,7 @@ def get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month,
 
     
 
-def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_start, hour_end, minute_end):
+def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_start, hour_end, minute_end, reverse):
     global clf
     
     try:
@@ -161,7 +172,7 @@ def recommend(lat, lon, radius, nrows, day_week, day_month, hour_start, minute_s
 
         start = clf.predict([[startCluster[0], startCluster[1], day_week, day_month, startChunkIdx]]).tolist()[0]
         adj_clusters = get_adj_clusters(lat, lon, radius, startChunkIdx, endChunkIdx, cursor)
-        suggestions = get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, nrows, cursor, cache)
+        suggestions = get_ranked_clusters(adj_clusters, startChunkIdx, start, day_week, day_month, nrows, cursor, cache, reverse)
         return {'suggestions' : suggestions, 'start' : start}
         
     except (Exception, psycopg2.Error) as error:
