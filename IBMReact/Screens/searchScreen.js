@@ -65,6 +65,13 @@ function addParameterToURL(_url, param){
   return _url;
 }
 
+function convertDow(dow) {
+  if (dow === 0) {
+    return 6;
+  }
+  return dow - 1;
+}
+
 class SearchScreen extends React.Component {
   
   constructor(props) {
@@ -168,11 +175,15 @@ class SearchScreen extends React.Component {
       mode: 'calendar',
     });
     if (action !== DatePickerAndroid.dismissedAction) {
+      console.log("The year is " + String(year));
+      console.log("The date is " + String(month+1) + "/" + String(day) + "/" + String(year))
+      console.log("The day is " + convertDow(String(moment(String(month+1) + "-" + String(day) + "-" + String(year), "MM-DD-YYYY").weekday())));
       this.setState({
-        dateString: moment().year(year).month(month).day(day).format("MM/DD/YY"),
-        dateMonth: month,
+        // dateString: moment().year(year).month(month).day(day).format("MM/DD/YY"),
+        dateString: String(month+1) + "/" + String(day) + "/" + String(year).substring(2),
+        dateMonth: month+1,
         dateDay: day,
-        dow: moment().year(year).month(month).day(day).weekday(),
+        dow: convertDow(moment(String(month+1) + "-" + String(day) + "-" + String(year), "MM-DD-YYYY").weekday())
       })
     }
     console.log("end of _onPressDate");
