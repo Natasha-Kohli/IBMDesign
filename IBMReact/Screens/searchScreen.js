@@ -84,7 +84,7 @@ class SearchScreen extends React.Component {
       endTimeMinute: moment().minute(),
       startText: "Enter Pickup Location",
       timeString: moment().format("h:mm A"),
-      dateString: moment().format("MM/DD/YY"),
+      dateString: moment().format("M/D/YY"),
       radius: 200,
       isLoading: true,
       markers: [],
@@ -101,6 +101,13 @@ class SearchScreen extends React.Component {
         longitudeDelta: 0.0421,
       },
       dow: moment().weekday(),
+      useLocation2: false,
+      location2: {
+        latitude: 40.7722,
+        longitude: -73.8721,
+        latitudeDelta: .015,
+        longitudeDelta: .007,
+      },
     };
   }
 
@@ -110,14 +117,15 @@ class SearchScreen extends React.Component {
         fetching: true
       })
       var myVar = await this.fetchData();
-    } else if (global.startCoords === null) {
+    } else if (global.startCoords === null) { 
       Alert.alert(
         'Wait a minute...',
-        'We don\'t know where you\'re leaving from.',
+        'We don\'t know where you\'re leaving from.',   
         [
           {text: 'Go back', onPress: () => console.log('Go back was pressed'), style: 'cancel'},
           {text: 'Take me there', onPress: () => {
             const {navigate} = this.props.navigation;
+            this.setState({ useLocation2: true })
             navigate('GoogleLocations')
           }} 
         ],
@@ -137,6 +145,17 @@ class SearchScreen extends React.Component {
     }
   }
 
+  async getATime(sh, sm) {
+    const {action, hour, minute} = await TimePickerAndroid.open({
+      hour:  sh,
+      minute: sm,
+      is24Hour: false
+    });
+    if (action !== TimePickerAndroid.dismissedAction) {
+      return (hour, minute)
+    }
+  }
+
   _onPressTime = async () => {
     const {action, hour, minute} = await TimePickerAndroid.open({
       hour:  new Date().getHours(),
@@ -149,23 +168,18 @@ class SearchScreen extends React.Component {
       this.setState({
         timeHour: hour,
         timeMinute: minute,
-        timeString: moment().hour(hour).minute(minute).format("h:mm A")
+        timeString: moment().hour(hour).minute(minute).format("h:mm A"),
+        endTimeHour: hour + 1,
+        endTimeMinute: minute
       })
     } 
+
     const {action2, hour2, minute2} = await TimePickerAndroid.open({
-      hour2:  new Date().getHours(),
-      minute2: new Date().getMinutes(),
+      hour:  this.state.timeHour,
+      minute: this.state.timeMinute,
       is24Hour: false
     });
-    if (action2 !== TimePickerAndroid.dismissedAction && hour2 >= hour) {
-      global.endTimeHour = hour2;
-      global.endTimeMinute = minute2;
-      this.setState({
-        timeHourEnd: hour,
-        timeMinuteEnd: minute,
-      })
-    } 
-    console.log("end of _onPressTime");
+    if (action2 !== TimePickerAndroid.dismissedAction) { } 
   }
 
   _onPressDate = async () => {
@@ -175,18 +189,13 @@ class SearchScreen extends React.Component {
       mode: 'calendar',
     });
     if (action !== DatePickerAndroid.dismissedAction) {
-      console.log("The year is " + String(year));
-      console.log("The date is " + String(month+1) + "/" + String(day) + "/" + String(year))
-      console.log("The day is " + convertDow(String(moment(String(month+1) + "-" + String(day) + "-" + String(year), "MM-DD-YYYY").weekday())));
       this.setState({
-        // dateString: moment().year(year).month(month).day(day).format("MM/DD/YY"),
         dateString: String(month+1) + "/" + String(day) + "/" + String(year).substring(2),
         dateMonth: month+1,
         dateDay: day,
         dow: convertDow(moment(String(month+1) + "-" + String(day) + "-" + String(year), "MM-DD-YYYY").weekday())
       })
     }
-    console.log("end of _onPressDate");
   }
 
   updateRadius = () => {
@@ -201,6 +210,7 @@ class SearchScreen extends React.Component {
   }
 
   _onStartFocus = () => {
+    this.setState({ useLocation2: true })
     const {navigate} = this.props.navigation;
     navigate('GoogleLocations')
   } 
@@ -216,9 +226,6 @@ class SearchScreen extends React.Component {
             longitude: marker.lon,
           };
 
-          console.log("marker: " + String(marker))
-
-          console.log(coords)
           return (
             <MapView.Marker
               key={index} 
@@ -240,17 +247,13 @@ class SearchScreen extends React.Component {
     requestURL = addParameterToURL(requestURL, 'day_week=' + String(this.state.dow));
     requestURL = addParameterToURL(requestURL, 'hour_start=' + String(this.state.timeHour));
     requestURL = addParameterToURL(requestURL, 'minute_start=' + String(this.state.timeMinute));
-    requestURL = addParameterToURL(requestURL, 'hour_end=' + String(this.state.timeHour+1));
-    requestURL = addParameterToURL(requestURL, 'minute_end=' + String(this.state.timeMinute));
+    requestURL = addParameterToURL(requestURL, 'hour_end=' + String(this.state.endTimeHour));
+    requestURL = addParameterToURL(requestURL, 'minute_end=' + String(this.state.endTimeMinute));
     requestURL = addParameterToURL(requestURL, 'nrows=7');
     requestURL = addParameterToURL(requestURL, 'reverse=true');
 
     //for testing 
     // requestURL = testServerURL;
-
-    console.log(requestURL);
-    //if (!(this.state.loadedURL === null) || requestURL === this.state.loadedURL) { return; }
-    console.log("fetching")
 
     fetch(requestURL, {method: 'GET'})
       .then((response) => response.json())
@@ -263,7 +266,6 @@ class SearchScreen extends React.Component {
           loadedURL: requestURL,
         });
         global.data = responseJson.suggestions;
-        console.log("the suggestions " + JSON.stringify(responseJson.suggestions));
         this.setState({ 
           displayMarkers: true,
           fetching: false
@@ -320,8 +322,8 @@ class SearchScreen extends React.Component {
           </View>
           <MapView
           style={styles.mapFlex}
-          provder="google"
-          initialRegion={this.state.region}
+          provider="google"
+          region={this.state.region}
           customMapStyle={global.mapStyle}
         >
           {this.renderMarkers()}

@@ -69,9 +69,6 @@ class ResultsScreen extends React.Component {
      ]
     }
 
-
-    console.log("selected list time");
-
     getDirections(data);
   }
 

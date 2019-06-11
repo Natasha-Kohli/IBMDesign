@@ -15,10 +15,10 @@ const latDelt = 0.0922;
 const lonDelt = 0.0421;
 
 region = {
-    latitude: 40.7128,
-    longitude: -74.0060,
-    latitudeDelta: latDelt,
-    longitudeDelta: lonDelt,
+    latitude: 40.7722,
+    longitude: -73.8721,
+    latitudeDelta: latDelt / 2.0,
+    longitudeDelta: lonDelt / 2.0,
   };
 
 mapStyle = [

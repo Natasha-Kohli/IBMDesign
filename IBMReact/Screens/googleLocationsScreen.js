@@ -37,18 +37,11 @@ class GoogleLocationsScreen extends React.Component {
           listViewDisplayed={false}
           fetchDetails={true}
           onPress={(data, details = null) => { 
-            console.log(JSON.stringify(data))
             global.data = data;
             global.startLocation = data.description;
             global.briefLocation = data.structured_formatting.main_text;
             global.startCoords = details.geometry.location;
             const {navigate} = this.props.navigation;
-            global.region = {
-              latitude: details.geometry.location.latitude,
-              longitude: details.geometry.location.longitude,
-              latitudeDelta: global.latDelt,
-              longitudeDelta: global.lonDelt,
-            };
             navigate('Search', { location: this.state.displayLocation });
             }
           }
@@ -60,8 +53,6 @@ class GoogleLocationsScreen extends React.Component {
           debounce={200}
           styles={{
             textInputContainer: {
-              // backgroundColor: 'rgba(0,0,0,0)', //These two don't seem to do anything
-              // color: 'rgba(0,0,0,0)',
               borderTopWidth: 0,
               borderBottomWidth:0
             },
